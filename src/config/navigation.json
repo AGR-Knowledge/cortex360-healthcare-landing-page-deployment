@@ -1,0 +1,171 @@
+{
+  "header": [
+    {
+      "name": "Industries",
+      "path": "/chatbot"
+    },
+    {
+      "name": "About Us",
+      "path": "/about"
+    },
+    {
+      "name": "AI Enterprise Solutions",
+      "path": "/team"
+    },
+    {
+      "name": "Knowledge base",
+      "path": "/blog"
+    }
+  ],
+  "footer1": [
+    {
+      "title": "Company",
+      "children": [
+        {
+          "name": "About",
+          "path": "/about"
+        },
+        {
+          "name": "Careers",
+          "path": "#"
+        },
+        {
+          "name": "Press",
+          "path": "#"
+        },
+        {
+          "name": "Contact Us",
+          "path": "/contact"
+        },
+        {
+          "name": "System Status",
+          "path": "#"
+        }
+      ]
+    },
+    {
+      "title": "Useful Link",
+      "children": [
+        {
+          "name": "Features",
+          "path": "#"
+        },
+        {
+          "name": "Resources",
+          "path": "#"
+        },
+        {
+          "name": "Service",
+          "path": "#"
+        },
+        {
+          "name": "Team",
+          "path": "/team"
+        },
+        {
+          "name": "Collection",
+          "path": "#"
+        }
+      ]
+    },
+    {
+      "title": "Product",
+      "children": [
+        {
+          "name": "Live Chat",
+          "path": "/chatbot"
+        },
+        {
+          "name": "Jirogram",
+          "path": "#"
+        },
+        {
+          "name": "Datasetico",
+          "path": "#"
+        },
+        {
+          "name": "Underline",
+          "path": "#"
+        },
+        {
+          "name": "Keyword",
+          "path": "#"
+        }
+      ]
+    }
+  ],
+  "footer2": [
+    {
+      "title": "Company",
+      "children": [
+        {
+          "name": "About",
+          "path": "/about"
+        },
+        {
+          "name": "Careers",
+          "path": "#"
+        },
+        {
+          "name": "Press",
+          "path": "#"
+        },
+        {
+          "name": "Contact Us",
+          "path": "/contact"
+        },
+        {
+          "name": "System Status",
+          "path": "#"
+        }
+      ]
+    },
+    {
+      "title": "Product",
+      "children": [
+        {
+          "name": "Live Chat",
+          "path": "/chatbot"
+        },
+        {
+          "name": "Jirogram",
+          "path": "#"
+        },
+        {
+          "name": "Datasetico",
+          "path": "#"
+        },
+        {
+          "name": "Underline",
+          "path": "#"
+        },
+        {
+          "name": "Keyword",
+          "path": "#"
+        }
+      ]
+    }
+  ],
+  "footer3": [
+    {
+      "name": "About",
+      "path": "/about"
+    },
+    {
+      "name": "Careers",
+      "path": "#"
+    },
+    {
+      "name": "Journal",
+      "path": "#"
+    },
+    {
+      "name": "Contact",
+      "path": "/contact"
+    },
+    {
+      "name": "System",
+      "path": "#"
+    }
+  ]
+}

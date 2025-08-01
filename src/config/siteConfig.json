@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "meta_author": "AGR AI Team",
+    "meta_image": "",
+    "meta_description": "AGR AI Portfolio Page"
+  },
+
+  "site_info": {
+    "title": "AGR AI Hub",
+    "description": "AGR AI Hub is a subsidiary of AGR Knowledge Services Pvt Ltd, a company prominent in the Market Research Industry.",
+    "base_url": "https://agrknowledgeai.com/",
+    "logo": "/assets/imgs/logo/logo.png",
+    "logo_light": "/assets/imgs/logo/logo-light.png",
+    "logo_icon": "/assets/imgs/logo/logo-icon.png",
+    "logo_width": 115,
+    "logo_height": 32,
+    "logo_text": "AGR AI Hub"
+  },
+
+  "footer_info": {
+    "address": {
+      "name": "1st Floor, Kalpataru Point, Near Sion Circle, Sion (East), Mumbai 400022, INDIA",
+      "link": "https://maps.app.goo.gl/8qUiMWztmXh32VhWA",
+      "iframe_src": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.825358651357!2d72.8651825!3d19.0416936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8cdbbf194f1%3A0x8a751c787e52a92e!2sAvalon%20Global%20Research!5e1!3m2!1sen!2sin!4v1745658412831!5m2!1sen!2sin"
+    },
+    "email": "info@agrknowledge.com",
+    "mobile": "+91-22-42792600 / +91-22-24034447 / +91-22-24034448",
+    "open_date": "Mon - Fri",
+    "open_time": "9:00 AM - 6:00 PM IST",
+    "copyright": {
+      "enable": true,
+      "label": "© All rights reserved by",
+      "company": "AGR Knowledge Services Pvt Ltd",
+      "link": "https://agrknowledge.com/"
+    }
+  },
+
+  "social": [
+    {
+      "name": "Fb",
+      "link": "https://www.facebook.com/AvalonGlobalResearch/",
+      "value": "750,000"
+    },
+    {
+      "name": "Tw",
+      "link": "https://twitter.com/AgrKnowledge",
+      "value": "750,000"
+    },
+    {
+      "name": "In",
+      "link": "https://www.instagram.com/",
+      "value": "750,000"
+    },
+    {
+      "name": "Db",
+      "link": "https://dribbble.com/",
+      "value": "750,000"
+    },
+    {
+      "name": "Li",
+      "link": "https://www.linkedin.com/company/avalon-global-research/",
+      "value": "750,000"
+    }
+  ]
+}

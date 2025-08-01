@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cortex360 Healthcare AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <style>
+    body {
+      position: relative;
+      background: #f3f4f6;
+      overflow-x: hidden;
+    }
+
+    /* Particle Background */
+    #particle-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      background: transparent;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(7, 32, 50, 0.6);
+      animation: floatParticle 10s infinite ease-in-out;
+    }
+    @keyframes floatParticle {
+      0% { transform: translateY(0) translateX(0); opacity: 0.8; }
+      50% { transform: translateY(-20px) translateX(10px); opacity: 0.4; }
+      100% { transform: translateY(0) translateX(0); opacity: 0.8; }
+    }
+
+    /* Chat Widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 400px;
+      height: 450px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(7, 32, 50, 0.5);
+      border: 1px solid rgba(7, 32, 50, 0.3);
+      backdrop-filter: blur(10px);
+      display: none;
+      overflow: hidden;
+      z-index: 1000;
+      flex-direction: column;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+    .chat-widget.active {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Animated Gradient Header */
+    .chat-header {
+      background: linear-gradient(270deg, #072032, #0b3b5e, #072032);
+      background-size: 600% 600%;
+      animation: gradientFlow 6s ease infinite;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(7, 32, 50, 0.7);
+    }
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Tabs */
+    .chat-tabs {
+      display: flex;
+      gap: 10px;
+      padding-left: 10px;
+    }
+    .chat-tab {
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .chat-tab.active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Panels Container */
+    .chat-panels {
+      display: flex;
+      width: 800px;
+      transition: transform 0.4s ease-in-out;
+    }
+    .panel {
+      width: 400px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    /* Contact Form */
+    .contact-form input,
+    .contact-form textarea {
+      border: 1px solid #d1d5db;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+    }
+    .contact-form button {
+      background: linear-gradient(to right, #072032, #0b3b5e);
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+    }
+    .contact-form button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Chat Body */
+    .chat-body {
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+      background: #ffffff;
+      height: 300px;
+    }
+    .message {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInMessage 0.3s forwards;
+    }
+    @keyframes fadeInMessage {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Chat Footer */
+    .chat-footer {
+      padding: 10px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 5px;
+    }
+    .chat-footer input {
+      flex: 1;
+      border: 1px solid #d1d5db;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .chat-footer button {
+      background: linear-gradient(to right, #072032, #0b3b5e);
+      color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+    }
+    .chat-footer button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Floating Chat Trigger with Pulsating Glow */
+    .chat-trigger {
+      background: linear-gradient(to right, #072032, #0b3b5e);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(7, 32, 50, 0.7);
+      animation: pulseGlow 2s infinite;
+      transition: transform 0.2s ease;
+      z-index: 1001;
+    }
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(7, 32, 50, 0.5), 0 0 20px rgba(11, 59, 94, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(7, 32, 50, 0.9), 0 0 40px rgba(11, 59, 94, 0.8);
+      }
+    }
+    .chat-trigger:hover {
+      transform: scale(1.05);
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #072032;
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes typingBounce {
+      0%, 80%, 100% {
+        transform: scale(0.6);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle Background -->
+  <div id="particle-bg"></div>
+
+  <!-- Floating Chat Button
+  <div class="fixed bottom-4 right-4 chat-trigger" onclick="toggleChat()">
+    Chat with Jnaya!
+  </div> -->
+
+  <!-- Chat Widget -->
+  <div class="chat-widget active" id="chatWidget">
+    <div class="chat-header">
+      <div class="flex items-center gap-2">
+        <lottie-player
+          src="https://assets2.lottiefiles.com/packages/lf20_j1adxtyb.json"
+          background="transparent"
+          speed="1"
+          style="width: 30px; height: 30px;"
+          loop
+          autoplay>
+        </lottie-player>
+        <span>Jnaya AI Assistant</span>
+      </div>
+      <div class="chat-tabs">
+        <div class="chat-tab active" id="contactTab" onclick="showPanel('contact')">Contact Us</div>
+        <div class="chat-tab" id="chatTab" onclick="showPanel('chat')">Chat</div>
+      </div>
+      <button onclick="toggleChat()" style="background:none; border:none; color:white; font-size:16px; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Panels container -->
+    <div class="chat-panels" id="chatPanels">
+      <!-- Contact Panel -->
+      <div class="panel">
+        <div class="contact-form">
+          <input type="text" placeholder="Full Name" id="fullName" class="mb-2" />
+          <input type="text" placeholder="Company Name" id="companyName" class="mb-2" />
+          <input type="email" placeholder="Work Email" id="workEmail" class="mb-2" />
+          <textarea placeholder="Pain Point" rows="3" id="painPoint" class="mb-2"></textarea>
+          <button onclick="submitContact()">Submit</button>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="panel">
+        <div class="chat-body" id="chatBody">
+          <p class="text-sm text-gray-700 mb-2 message"><strong>Jnaya:</strong> Hi! How can I help you today?</p>
+        </div>
+        <div class="chat-footer">
+          <input type="text" id="chatInput" placeholder="Type a message..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Particle Background Generation
+    const particleContainer = document.getElementById('particle-bg');
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      const size = Math.random() * 8 + 4; // 4-12px
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.top = `${Math.random() * 100}%`;
+      particle.style.left = `${Math.random() * 100}%`;
+      particleContainer.appendChild(particle);
+    }
+
+    function toggleChat() {
+      document.getElementById("chatWidget").classList.toggle("active");
+    }
+
+    function showPanel(panel) {
+      const chatPanels = document.getElementById("chatPanels");
+      const contactTab = document.getElementById("contactTab");
+      const chatTab = document.getElementById("chatTab");
+
+      if (panel === 'contact') {
+        chatPanels.style.transform = "translateX(0)";
+        contactTab.classList.add('active');
+        chatTab.classList.remove('active');
+      } else {
+        chatPanels.style.transform = "translateX(-400px)";
+        chatTab.classList.add('active');
+        contactTab.classList.remove('active');
+      }
+    }
+
+    function submitContact() {
+      const name = document.getElementById("fullName").value;
+      const company = document.getElementById("companyName").value;
+      const email = document.getElementById("workEmail").value;
+      const pain = document.getElementById("painPoint").value;
+      alert(`Contact Form Submitted:\nName: ${name}\nCompany: ${company}\nEmail: ${email}\nPain Point: ${pain}`);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const chatBody = document.getElementById("chatBody");
+      if (input.value.trim()) {
+        const userMsg = document.createElement("p");
+        userMsg.className = "text-sm text-blue-600 mb-1 message";
+        userMsg.innerHTML = `<strong>You:</strong> ${input.value}`;
+        chatBody.appendChild(userMsg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Typing indicator
+        const typingIndicator = document.createElement("div");
+        typingIndicator.className = "typing-indicator message";
+        typingIndicator.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+        chatBody.appendChild(typingIndicator);
+        input.value = "";
+
+        setTimeout(() => {
+          chatBody.removeChild(typingIndicator);
+          const botMsg = document.createElement("p");
+          botMsg.className = "text-sm text-gray-700 mb-2 message";
+          botMsg.innerHTML = `<strong>Jnaya:</strong> Thanks for your query! I'll get back to you.`;
+          chatBody.appendChild(botMsg);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }, 1200);
+      }
+    }
+  </script>
+</body>
+</html>
