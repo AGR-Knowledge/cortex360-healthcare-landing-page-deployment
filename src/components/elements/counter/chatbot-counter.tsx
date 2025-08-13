@@ -1,9 +1,24 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback, useMemo, useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { ReactFlow, Node, Edge, Controls, Background, useNodesState, useEdgesState, addEdge, Connection, Handle, Position, ConnectionMode } from 'reactflow';
+import 'reactflow/dist/style.css';
+
+// React Icons
+import { PiMicrophoneLight } from "react-icons/pi";
+import { SlGraph } from "react-icons/sl";
+import { GiMagnifyingGlass, GiMedicines } from "react-icons/gi";
+import { HiDocumentMagnifyingGlass } from "react-icons/hi2";
+import { DiGoogleAnalytics } from "react-icons/di";
+import { BsGraphUp } from "react-icons/bs";
+import { LuBrainCircuit } from "react-icons/lu";
+import { CiDeliveryTruck } from "react-icons/ci";
+import { LiaBrainSolid } from "react-icons/lia";
+import { MdDashboard } from "react-icons/md";
+import { PiGraph } from "react-icons/pi";
 
 // gsap
 import { useGSAP } from "@gsap/react";
@@ -43,10 +58,304 @@ type Props = {
   };
 };
 
+// Left Side Node Component (output handle on right)
+const LeftNode = ({ data }: { data: any }) => {
+  const getIcon = (iconType: string) => {
+    switch (iconType) {
+      case 'clinical-trial':
+        return <GiMedicines size={48} className="text-blue-600" />;
+      case 'tender-analyzer':
+        return <HiDocumentMagnifyingGlass size={48} className="text-blue-600" />;
+      case 'dashboard-generation':
+        return <DiGoogleAnalytics size={48} className="text-blue-600" />;
+      default:
+        return <div className="text-3xl">📊</div>;
+    }
+  };
+
+  return (
+    <div className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative">
+      <Handle type="source" position={Position.Right} className="invisible" />
+
+      {/* Header with title */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-3 border-b border-blue-200">
+        <h3 className="text-sm font-bold text-blue-800 text-center leading-tight">{data.title}</h3>
+      </div>
+
+      {/* Body with icon */}
+      <div className="p-4 flex justify-center items-center min-h-[80px]">
+        {getIcon(data.iconType)}
+      </div>
+
+      {/* Footer with description */}
+      <div className="px-4 pb-4">
+        <p className="text-xs text-gray-600 leading-tight text-center">
+          {data.description.length > 80 ? `${data.description.substring(0, 80)}...` : data.description}
+        </p>
+      </div>
+
+      {/* Button in bottom right corner */}
+      <button
+        onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
+        className="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md transition-colors duration-200 shadow-sm font-medium"
+      >
+        Learn More
+      </button>
+    </div>
+  );
+};
+
+// Right Side Node Component (output handle on left)
+const RightNode = ({ data }: { data: any }) => {
+  const getIcon = (iconType: string) => {
+    switch (iconType) {
+      case 'demand-forecasting':
+        return <BsGraphUp size={48} className="text-blue-600" />;
+      case 'conversational-intelligence':
+        return <LuBrainCircuit size={48} className="text-blue-600" />;
+      case 'sales-tracking':
+        return <CiDeliveryTruck size={48} className="text-blue-600" />;
+      default:
+        return <div className="text-3xl">📊</div>;
+    }
+  };
+
+  return (
+    <div className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative">
+      <Handle type="source" position={Position.Left} className="invisible" />
+
+      {/* Header with title */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-3 border-b border-blue-200">
+        <h3 className="text-sm font-bold text-blue-800 text-center leading-tight">{data.title}</h3>
+      </div>
+
+      {/* Body with icon */}
+      <div className="p-4 flex justify-center items-center min-h-[80px]">
+        {getIcon(data.iconType)}
+      </div>
+
+      {/* Footer with description */}
+      <div className="px-4 pb-4">
+        <p className="text-xs text-gray-600 leading-tight text-center">
+          {data.description.length > 80 ? `${data.description.substring(0, 80)}...` : data.description}
+        </p>
+      </div>
+
+      {/* Button in bottom right corner */}
+      <button
+        onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
+        className="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md transition-colors duration-200 shadow-sm font-medium"
+      >
+        Learn More
+      </button>
+    </div>
+  );
+};
+
+// Central Cortex360 Node Component
+const CortexNode = ({ data }: { data: any }) => {
+  return (
+    <div className="cortex-node bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg border-4 border-white p-6 min-w-[120px] min-h-[120px] flex items-center justify-center">
+      <Handle id="left" type="target" position={Position.Left} className="invisible" />
+      <Handle id="right" type="target" position={Position.Right} className="invisible" />
+
+      <div className="text-center">
+        <div className="text-xl font-bold">Cortex360</div>
+      </div>
+    </div>
+  );
+};
+
+// Modal Portal Component
+const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; onClose: () => void; title: string; nodeData?: any }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scrolling when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body scrolling when modal is closed
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!mounted || !isOpen) return null;
+
+  // Create portal to render modal outside component tree
+  const modalElement = (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+        cursor: 'pointer'
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          position: 'relative',
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          maxWidth: '600px',
+          width: 'calc(100% - 40px)',
+          maxHeight: '80vh',
+          overflowY: 'auto',
+          cursor: 'default'
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="p-6"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+          >
+            ×
+          </button>
+        </div>
+
+        {nodeData ? (
+          <div className="space-y-6">
+            {/* Icon */}
+            <div className="flex justify-center">
+              {(() => {
+                switch (nodeData.title) {
+                  case 'Clinical Trial Setup: The Hidden Burden':
+                    return <GiMedicines size={80} className="text-blue-600" />;
+                  case 'AI-Assisted Tender Analyzer':
+                    return <HiDocumentMagnifyingGlass size={80} className="text-blue-600" />;
+                  case 'Natural Language Dashboard Generated':
+                    return <DiGoogleAnalytics size={80} className="text-blue-600" />;
+                  case 'Advanced Demand & Inventory Forecasting':
+                    return <BsGraphUp size={80} className="text-blue-600" />;
+                  case 'Conversational Data Intelligence':
+                    return <LuBrainCircuit size={80} className="text-blue-600" />;
+                  case 'Intelligent Secondary Sales Tracking':
+                    return <CiDeliveryTruck size={80} className="text-blue-600" />;
+                  default:
+                    return <div className="text-6xl">📊</div>;
+                }
+              })()}
+            </div>
+
+            {/* Description */}
+            <div className="text-gray-600">
+              <p className="text-lg leading-relaxed">{nodeData.description}</p>
+            </div>
+
+            {/* Key Features */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Key Features</h3>
+              <ul className="space-y-2">
+                {nodeData.keyFeatures.map((feature: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-blue-500 mr-2">•</span>
+                    <span className="text-gray-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Benefits */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Benefits</h3>
+              <ul className="space-y-2">
+                {nodeData.benefits.map((benefit: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span className="text-gray-600">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              {nodeData.buttons.map((button: any, index: number) => (
+                <button
+                  key={index}
+                  className={`px-6 py-3 rounded-lg font-medium transition-colors ${index === 0
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                    }`}
+                >
+                  {button.text}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="text-gray-600 mb-6">
+            <p>This is a detailed view for {title}. Here you can add more information about this feature, including:</p>
+            <ul className="list-disc list-inside mt-3 space-y-1">
+              <li>Detailed feature description</li>
+              <li>Technical specifications</li>
+              <li>Use cases and benefits</li>
+              <li>Integration options</li>
+              <li>Pricing information</li>
+            </ul>
+          </div>
+        )}
+
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Use createPortal to render modal to document.body
+  if (typeof document !== 'undefined') {
+    return ReactDOM.createPortal(modalElement, document.body);
+  }
+
+  return null;
+};
+
+// Define nodeTypes outside component to prevent recreation
+const nodeTypes = {
+  left: LeftNode,
+  right: RightNode,
+  cortex: CortexNode,
+};
+
 const ChatbotCounter = ({ counter }: Props) => {
   const { title, details, apps, counters, shape1_img } = counter.data;
 
   const containerRef = useRef<HTMLDivElement>(null!);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<string>('');
+
+  const handleNodeButtonClick = (nodeTitle: string) => {
+    setSelectedNode(nodeTitle);
+    setIsModalOpen(true);
+  };
 
   useGSAP(
     () => {
@@ -55,71 +364,312 @@ const ChatbotCounter = ({ counter }: Props) => {
     { scope: containerRef }
   );
 
-  useEffect(() => {
-    const details = {
-      "sales-tracking": "Track and visualize real-time secondary sales data at a granular level with intelligent pattern recognition and automated reporting capabilities.",
-      "dashboard": "Create insightful dashboards instantly by typing simple natural language queries. Transform complex data into beautiful, actionable visualizations.",
-      "tender": "Automate tender analysis and supplier matching with AI-trained rules and institutional memory for faster, more accurate procurement decisions.",
-      "forecasting": "Predict product demand and optimize inventory distribution using advanced AI models with real-time market intelligence and seasonal adjustments.",
-      "conversational": "Ask Cortex360 questions in plain English and get precise insights instantly. Natural language processing meets healthcare data intelligence.",
-      "clinical": "Reduce clinical trial setup time by 70% through automated site readiness assessment and intelligent form standardization protocols."
-    };
-
-    const tooltip = document.getElementById("tooltip");
-    const nodes = document.querySelectorAll(".node[data-id]");
-    const lines = document.querySelectorAll(".connecting-line");
-
-    nodes.forEach((node, index) => {
-      node.addEventListener("mouseenter", () => {
-        const id = node.getAttribute("data-id");
-        if (id && details[id] && tooltip) {
-          tooltip.innerHTML = details[id];
-          tooltip.classList.add("show");
-          tooltip.style.top = `${node.offsetTop + node.offsetHeight + 15}px`;
-          tooltip.style.left = `${Math.min(node.offsetLeft, 800)}px`;
-
-          if (lines[index]) {
-            lines[index].classList.add("active");
-          }
+  // Define nodes data
+  const initialNodes: Node[] = useMemo(() => [
+    // Central Cortex360 node
+    {
+      id: 'cortex360',
+      type: 'cortex',
+      position: { x: 600, y: 300 },
+      data: { title: 'Cortex360', icon: '🧠', description: 'Central AI Hub' },
+    },
+    // Left side nodes (output handle on right)
+    {
+      id: 'clinical-trial',
+      type: 'left',
+      position: { x: -50, y: 100 },
+      data: {
+        title: 'Clinical Trial Setup: The Hidden Burden',
+        iconType: 'clinical-trial',
+        description: 'Automate the creation of clinical trial CRF forms, ALS, edit checks and visit schedules directly from protocols.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'Clinical Trial Setup: The Hidden Burden',
+          description: 'Automate the creation of clinical trial CRF forms, ALS, edit checks and visit schedules directly from protocols.',
+          keyFeatures: [
+            'NLP-based extraction of fields and dependencies from protocols',
+            'Supports Medidata Rave, Openclinica, Veeva & other EDC formats'
+          ],
+          benefits: [
+            'Reduces manual efforts by 80%',
+            'Eliminates compliance errors in form creation'
+          ],
+          buttons: [
+            { text: 'Generate Sample CRF', action: 'generate-crf' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/clinical_trial_logo.png'
         }
-      });
-
-      node.addEventListener("mouseleave", () => {
-        if (tooltip) {
-          tooltip.classList.remove("show");
+      },
+    },
+    {
+      id: 'tender-analyzer',
+      type: 'left',
+      position: { x: -80, y: 300 },
+      data: {
+        title: 'AI-Assisted Tender Analyzer',
+        iconType: 'tender-analyzer',
+        description: 'Automate tender reviews and risk detection by matching with current portfolio to boost speed, accuracy, and revenue, empowering procurement teams to win more business with less effort.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'AI-Assisted Tender Analyzer',
+          description: 'Automate tender reviews and risk detection by matching with current portfolio to boost speed, accuracy, and revenue, empowering procurement teams to win more business with less effort.',
+          keyFeatures: [
+            'Instantly scan and summarize hundreds of pages per tender',
+            'Auto-match tender needs & requirements with your product portfolio',
+            'Real-time dashboards highlight opportunities and risks with product fit score'
+          ],
+          benefits: [
+            'Saves days of manual review and reduces errors',
+            'Captures more revenue by responding faster and smarter',
+            'Levels the playing field against data-driven competitors'
+          ],
+          buttons: [
+            { text: 'View sample summary card for a tender', action: 'view-sample' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/tender_analyzer_logo.png'
         }
-        lines.forEach((line) => line.classList.remove("active"));
-      });
-
-      node.addEventListener("click", () => {
-        nodes.forEach((n) => n.classList.remove("active"));
-        node.classList.add("active");
-
-        const id = node.getAttribute("data-id");
-        if (id && details[id]) {
-          tooltip.innerHTML = details[id];
-          tooltip.classList.add("show");
-          tooltip.style.top = `${node.offsetTop + node.offsetHeight + 15}px`;
-          tooltip.style.left = `${Math.min(node.offsetLeft, 800)}px`;
+      },
+    },
+    {
+      id: 'dashboard-generation',
+      type: 'left',
+      position: { x: -60, y: 500 },
+      data: {
+        title: 'Natural Language Dashboard Generated',
+        iconType: 'dashboard-generation',
+        description: 'Automate analytics with dashboards you can build and explain in plain English - no technical barriers, just instant answers and insights.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'Natural Language Dashboard Generated',
+          description: 'Automate analytics with dashboards you can build and explain in plain English - no technical barriers, just instant answers and insights.',
+          keyFeatures: [
+            'Create dashboards instantly using natural language queries',
+            'Every chart includes AI-generated insights explaining what and why',
+            'Drag, resize, and fully customize dashboards with a flexible canvas'
+          ],
+          benefits: [
+            'Accelerates decision-making with instant, story-rich analytics',
+            'No coding or technical expertise required',
+            'Uncover root causes behind every metric for deeper understanding'
+          ],
+          buttons: [
+            { text: 'View sample', action: 'view-sample' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/dashboard_generation_logo.png'
         }
-      });
-    });
+      },
+    },
+    // Right side nodes (output handle on left)
+    {
+      id: 'demand-forecasting',
+      type: 'right',
+      position: { x: 900, y: 100 },
+      data: {
+        title: 'Advanced Demand & Inventory Forecasting',
+        iconType: 'demand-forecasting',
+        description: 'Manual, outdated planning methods lead to expired stock, dead stock, lost sales, and missed market signals-costing pharmacies millions every year.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'Advanced Demand & Inventory Forecasting',
+          description: 'Manual, outdated planning methods lead to expired stock, dead stock, lost sales, and missed market signals-costing pharmacies millions every year.',
+          keyFeatures: [
+            'Quickly identifies excess, expiring, or missing inventory using real-time data',
+            'Flags market shifts and demand trends missed by traditional models',
+            'Highlights lost revenue and operational inefficiencies'
+          ],
+          benefits: [
+            'Cuts dead stock and revenue loss dramatically',
+            'Helps teams move from reactive to proactive planning',
+            'Reduces manual effort and error'
+          ],
+          buttons: [
+            { text: 'View Sample', action: 'view-sample' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/inventory_forecasting_logo.png'
+        }
+      },
+    },
+    {
+      id: 'conversational-intelligence',
+      type: 'right',
+      position: { x: 920, y: 300 },
+      data: {
+        title: 'Conversational Data Intelligence',
+        iconType: 'conversational-intelligence',
+        description: 'Explore and analyze all your data, structured or unstructured, instantly through a chat interface, with insights delivered in plain English for everyone on your team.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'Conversational Data Intelligence',
+          description: 'Explore and analyze all your data, structured or unstructured, instantly through a chat interface, with insights delivered in plain English for everyone on your team.',
+          keyFeatures: [
+            'Natural language chat for querying any data, no technical skills needed',
+            'Seamless access to all data types and sources',
+            'Real-time, interactive answers and deep-dive analysis'
+          ],
+          benefits: [
+            'Instant insights, without waiting for analysts',
+            'Empowers every user to explore and understand data',
+            'Unlocks hidden knowledge and drives smarter decisions'
+          ],
+          buttons: [
+            { text: 'Experience Bot!', action: 'experience-bot' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/data_intelligence_logo.png'
+        }
+      },
+    },
+    {
+      id: 'sales-tracking',
+      type: 'right',
+      position: { x: 880, y: 500 },
+      data: {
+        title: 'Intelligent Secondary Sales Tracking',
+        iconType: 'sales-tracking',
+        description: 'Automate downstream sales data collection, unification, and compliance reporting for clear, real-time visibility into your distribution network.',
+        onButtonClick: handleNodeButtonClick,
+        fullData: {
+          title: 'Intelligent Secondary Sales Tracking',
+          description: 'Automate downstream sales data collection, unification, and compliance reporting for clear, real-time visibility into your distribution network.',
+          keyFeatures: [
+            'Automatic ingestion and normalization of sales data from all distributor systems',
+            'Real-time dashboards showing distributor-to-retailer sales patterns and product movement',
+            'AI-powered data reconciliation for instant, accurate matching of primary and secondary sales'
+          ],
+          benefits: [
+            'Eliminates manual reconciliation, save days of effort per cycle',
+            'Ensures up-to-date, actionable sales intelligence',
+            'Reduces compliance risk with traceable, audit-ready reporting'
+          ],
+          buttons: [
+            { text: 'View Secondary Sales Report', action: 'view-report' },
+            { text: 'Automate this!', action: 'automate' }
+          ],
+          image: '/assets/imgs/pharma/secondary_sales_logo.png'
+        }
+      },
+    },
+  ], []);
 
-    document.addEventListener("click", (e) => {
-      if (!(e.target as HTMLElement).closest(".node")) {
-        nodes.forEach((n) => n.classList.remove("active"));
-        tooltip.classList.remove("show");
-        lines.forEach((line) => line.classList.remove("active"));
-      }
-    });
+  // Define edges connecting all nodes to Cortex360
+  const initialEdges: Edge[] = useMemo(() => [
+    // Left side nodes connect to left side of Cortex360
+    {
+      id: 'e1',
+      source: 'clinical-trial',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'left',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#6366f1',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite'
+      },
+      className: 'neon-edge-blue'
+    },
+    {
+      id: 'e3',
+      source: 'dashboard-generation',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'left',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#ec4899',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite 0.3s'
+      },
+      className: 'neon-edge-pink'
+    },
+    {
+      id: 'e5',
+      source: 'tender-analyzer',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'left',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#10b981',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite 0.6s'
+      },
+      className: 'neon-edge-green'
+    },
+    // Right side nodes connect to right side of Cortex360
+    {
+      id: 'e2',
+      source: 'demand-forecasting',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'right',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#8b5cf6',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite 0.9s'
+      },
+      className: 'neon-edge-purple'
+    },
+    {
+      id: 'e4',
+      source: 'sales-tracking',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'right',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#06b6d4',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite 1.2s'
+      },
+      className: 'neon-edge-cyan'
+    },
+    {
+      id: 'e6',
+      source: 'conversational-intelligence',
+      sourceHandle: null,
+      target: 'cortex360',
+      targetHandle: 'right',
+      type: 'default',
+      animated: true,
+      style: {
+        stroke: '#f59e0b',
+        strokeWidth: 3,
+        strokeDasharray: '10,5',
+        strokeDashoffset: 0,
+        animation: 'neonFlow 2s linear infinite 1.5s'
+      },
+      className: 'neon-edge-orange'
+    },
+  ], []);
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        nodes.forEach((n) => n.classList.remove("active"));
-        tooltip.classList.remove("show");
-      }
-    });
-  }, []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges],
+  );
 
   return (
     <section className="pt-[53px] md:pt-[73px] xl:pt-[93px] 2xl:pt-[123px]">
@@ -133,196 +683,277 @@ const ChatbotCounter = ({ counter }: Props) => {
               titleClassName="w-full flex justify-center whitespace-nowrap text-center 2xl:text-[55px] text-[55px] leading-[1.16] has_fade_anim "
               detailsClassName="text-[18px] text-center mt-[10px] 2xl:mt-[20px] max-w-[800px] mx-auto has_fade_anim w-full px-4"
             />
-            {apps && apps.enable && (
-              <>
-                <div className="use-case-map mt-[40px] relative">
-                  {/* SVG Lines */}
-                  <svg
-                    viewBox="0 0 1100 700"
-                    className="absolute top-0 left-0 w-full h-full z-0"
-                  >
-                    <defs>
-                      <linearGradient
-                        id="gradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="0%"
+
+            <div className="network-container mt-[40px] relative w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                nodeTypes={nodeTypes}
+                fitView
+                fitViewOptions={{ padding: 0.1 }}
+                attributionPosition="bottom-right"
+                className="react-flow-container"
+                defaultEdgeOptions={{
+                  type: 'default',
+                  animated: true,
+                  style: { strokeWidth: 3 }
+                }}
+                connectOnClick={false}
+                connectionMode={ConnectionMode.Strict}
+                panOnDrag={false}
+                zoomOnScroll={false}
+                zoomOnPinch={false}
+                zoomOnDoubleClick={false}
+                preventScrolling={false}
+                nodesDraggable={true}
+                onWheel={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                proOptions={{ hideAttribution: true }}
+                minZoom={0.5}
+                maxZoom={1.5}
+                defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+              >
+                <Background color="#e5e7eb" gap={20} />
+              </ReactFlow>
+            </div>
+
+            <div className="mb-[10px] md:mb-[60px]">
+              <div className="mt-[3px] has_fade_anim">
+                {apps.buttons && apps.buttons.length && (
+                  <div className="mt-[32px]">
+                    {apps.buttons.map((item, i) => (
+                      <div
+                        key={`apps_button-${i}`}
+                        className="mt-[20px] first:mt-0"
                       >
-                        <stop offset="0%" stopColor="#6366f1" stopOpacity="1" />
-                        <stop offset="50%" stopColor="#8b5cf6" stopOpacity="1" />
-                        <stop offset="100%" stopColor="#ec4899" stopOpacity="1" />
-                      </linearGradient>
-                    </defs>
-                    {[
-                      "M550,340 Q350,200 200,120",
-                      "M550,340 Q750,200 900,120",
-                      "M550,340 Q350,340 200,320",
-                      "M550,340 Q750,340 900,320",
-                      "M550,340 Q350,480 200,580",
-                      "M550,340 Q750,480 900,580",
-                    ].map((d, idx) => (
-                      <path key={idx} className="connecting-line" d={d} />
-                    ))}
-                  </svg>
-
-                  {/* Tooltip */}
-                  <div id="tooltip" className="tooltip" />
-
-                  {/* Nodes */}
-                  {[
-                    {
-                      id: "product-development",
-                      top: 700,
-                      left: 400,
-                      title: "🛠️ Product Development",
-                      desc: "Feature Prioritization",
-                    },
-                    {
-                      id: "sales-tracking",
-                      top: 100,
-                      left: 140,
-                      title: "🔍 Intelligent",
-                      desc: "Secondary Sales Tracking",
-                    },
-                    {
-                      id: "dashboard",
-                      top: 100,
-                      left: 820,
-                      title: "📊 Natural Language",
-                      desc: "Dashboard Generation",
-                    },
-                    {
-                      id: "tender",
-                      top: 300,
-                      left: 140,
-                      title: "🤖 AI-Assisted",
-                      desc: "Tender Analyzer",
-                    },
-                    {
-                      id: "forecasting",
-                      top: 300,
-                      left: 820,
-                      title: "📈 Advanced Demand &",
-                      desc: "Inventory Forecasting",
-                    },
-                    {
-                      id: "conversational",
-                      top: 560,
-                      left: 140,
-                      title: "💬 Conversational",
-                      desc: "Data Intelligence",
-                    },
-                    {
-                      id: "clinical",
-                      top: 560,
-                      left: 820,
-                      title: "🧪 Clinical",
-                      desc: "Trial Setup",
-                    }
-                  ].map(({ id, top, left, title, desc }) => (
-                    <div
-                      key={id}
-                      className="node"
-                      data-id={id}
-                      style={{ top: `${top}px`, left: `${left}px` }}
-                    >
-                      <div>{title}</div>
-                      <div>{desc}</div>
-                    </div>
-                  ))}
-
-                  {/* Center Node */}
-                  <div className="node center">Cortex360</div>
-                </div>
-                <div className="mb-[10px] md:mb-[60px]">
-                  {/* <h3 className="text-[30px] leading-[1.16] has_fade_anim">
-                    {apps.title}
-                  </h3>
-                  <p className="mt-[20px] has_fade_anim">{apps.details}</p> */}
-                  <div className="mt-[3px] has_fade_anim">
-                    {/* <div className="hidden lg:block ms-[128px]">
-                      {apps.app_shape && (
-                        <Image
-                          width={47}
-                          height={76}
-                          src={apps.app_shape}
-                          className="rtl_y"
-                          alt="shape image"
-                        />
-                      )}
-                    </div> */}
-                    {apps.buttons && apps.buttons.length && (
-                      <div className="mt-[32px]">
-                        {apps.buttons.map((item, i) => (
-                          <div
-                            key={`apps_button-${i}`}
-                            className="mt-[20px] first:mt-0"
-                          >
-                            <Link href={item.link}>
-                              {/* {item.image && (
-                                <Image
-                                  width={180}
-                                  height={60}
-                                  src={item.image}
-                                  alt="app image"
-                                />
-                              )} */}
-                            </Link>
-                          </div>
-                        ))}
+                        <Link href={item.link}>
+                          {/* Button content */}
+                        </Link>
                       </div>
-                    )}
+                    ))}
                   </div>
-                </div>
-                {/* <div className="has_fade_anim">
-                  {apps.image && (
-                    <Image
-                      width={286}
-                      height={486}
-                      src={apps.image}
-                      alt="app image"
-                    />
-                  )}
-                </div> */}
-              </>
-            )}
+                )}
+              </div>
+            </div>
           </div>
+
           <div className="flex flex-wrap gap-[20px] rounded-theme w-full md:w-[700px] lg:w-[785px] mx-auto relative justify-center lg:justify-between z-[1]">
-            {/* {counters && counters.length && (
-              <>
-                {counters.slice(0, 3).map((item, i) => (
-                  <div
-                    key={`counter_item-${i}`}
-                    className="rounded-theme relative bg-sec_bg-2 pt-[37px] 2xl:pt-[57px] pb-[33px] 2xl:pb-[53px] px-[35px] 2xl:px-[55px] outline-[20px] outline outline-white first:bg-[#EBE5FD] w-[300px] lg:w-[400px] first:w-[300px] lg:first:w-[365px] lg:[&:nth-child(3)]:!rounded-tr-[0px] lg:[&:nth-child(2)]:!rounded-bl-[0px] rtl:lg:[&:nth-child(3)]:!rounded-tr-[20px] rtl:lg:[&:nth-child(2)]:!rounded-bl-[20px] rtl:lg:[&:nth-child(3)]:!rounded-tl-[0px] rtl:lg:[&:nth-child(2)]:!rounded-br-[0px] [&:nth-child(3)]:before:hidden lg:[&:nth-child(3)]:before:block [&:nth-child(3)]:before:absolute [&:nth-child(3)]:before:content-[url(/assets/imgs/counter/chatbot/joint-shape.png)] [&:nth-child(3)]:before:-end-[19px] [&:nth-child(3)]:before:-top-[20px] [&:nth-child(3)]:before:z-[2] rtl:[&:nth-child(3)]:before:transform rtl:[&:nth-child(3)]:before:rotate-y-[180deg] has_fade_anim"
-                    data-delay={delayTime2(i + 1)}
-                  >
-                    <h3 className="text-[40px] 2xl:text-[60px]">
-                      <span>{item.number}</span>
-                      {item.unit}
-                    </h3>
-                    <p className="mt-[15px] max-w-[250px]">{item.text}</p>
-                  </div>
-                ))}
-                <div
-                  className="rounded-theme w-[300px] lg:w-[365px] bg-[#D7EFDF] outline-[20px] outline outline-white pt-[37px] 2xl:pt-[57px] flex justify-center items-end has_fade_anim"
-                  data-delay="0.45"
-                >
-                  {shape1_img && (
-                    <Image
-                      width={375}
-                      height={264}
-                      src={shape1_img}
-                      className="object-cover w-full"
-                      alt="Shape Image"
-                    />
-                  )}
-                </div>
-              </>
-            )} */}
+            {/* Counter section can be added here if needed */}
           </div>
         </div>
       </div>
+
+      {/* Modal Portal */}
+      {isModalOpen && typeof document !== 'undefined' && (
+        <ModalPortal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={selectedNode}
+          nodeData={nodes.find(node => node.data.title === selectedNode)?.data.fullData}
+        />
+      )}
+
+      <style jsx global>{`
+        .react-flow-container {
+          background: transparent !important;
+        }
+        
+        .react-flow__viewport {
+          pointer-events: none !important;
+        }
+        
+        .react-flow__pane {
+          pointer-events: none !important;
+        }
+        
+        .react-flow__node {
+          cursor: pointer;
+          pointer-events: auto !important;
+          will-change: transform;
+          transform: translateZ(0);
+        }
+        
+        .react-flow__node:hover {
+          transform: scale(1.05);
+          transition: transform 0.2s ease;
+        }
+        
+        /* Optimize dragging performance for all nodes */
+        .react-flow__node.react-flow__node-dragging {
+          transition: none !important;
+          will-change: transform;
+          transform: translateZ(0);
+          cursor: grabbing;
+        }
+        
+        .react-flow__edge-path {
+          stroke-dasharray: 10,5;
+          animation: neonFlow 2s linear infinite;
+        }
+        
+        /* Edge specific styles */
+        .neon-edge-blue .react-flow__edge-path {
+          stroke: #6366f1 !important;
+          animation: neonFlow 2s linear infinite;
+        }
+        
+        .neon-edge-pink .react-flow__edge-path {
+          stroke: #ec4899 !important;
+          animation: neonFlow 2s linear infinite 0.3s;
+        }
+        
+        .neon-edge-green .react-flow__edge-path {
+          stroke: #10b981 !important;
+          animation: neonFlow 2s linear infinite 0.6s;
+        }
+        
+        .neon-edge-purple .react-flow__edge-path {
+          stroke: #8b5cf6 !important;
+          animation: neonFlow 2s linear infinite 0.9s;
+        }
+        
+        .neon-edge-cyan .react-flow__edge-path {
+          stroke: #06b6d4 !important;
+          animation: neonFlow 2s linear infinite 1.2s;
+        }
+        
+        .neon-edge-orange .react-flow__edge-path {
+          stroke: #f59e0b !important;
+          animation: neonFlow 2s linear infinite 1.5s;
+        }
+        
+        .react-flow__controls {
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .react-flow__controls button {
+          border-radius: 4px;
+          color: #374151;
+        }
+        
+        .react-flow__controls button:hover {
+          background-color: #f3f4f6;
+        }
+        
+        @keyframes neonFlow {
+          0% {
+            stroke-dashoffset: 0;
+            opacity: 0.8;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            stroke-dashoffset: -15;
+            opacity: 0.8;
+          }
+        }
+        
+
+        
+        .custom-node {
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          border: 2px solid #e5e7eb;
+        }
+        
+        .custom-node::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          transition: left 0.5s ease;
+        }
+        
+        .custom-node:hover {
+          border-color: #6366f1;
+          box-shadow: 
+            0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+            0 10px 10px -5px rgba(0, 0, 0, 0.04),
+            0 0 20px rgba(99, 102, 241, 0.3),
+            0 0 40px rgba(99, 102, 241, 0.1);
+          animation: floatUpDown 2s ease-in-out infinite;
+        }
+        
+        .custom-node:hover::before {
+          left: 100%;
+        }
+        
+        @keyframes floatUpDown {
+          0%, 100% {
+            transform: translateY(-2px);
+            box-shadow: 
+              0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04),
+              0 0 20px rgba(99, 102, 241, 0.3),
+              0 0 40px rgba(99, 102, 241, 0.1);
+          }
+          50% {
+            transform: translateY(-8px);
+            box-shadow: 
+              0 25px 30px -5px rgba(0, 0, 0, 0.15), 
+              0 15px 15px -5px rgba(0, 0, 0, 0.06),
+              0 0 30px rgba(99, 102, 241, 0.5),
+              0 0 60px rgba(99, 102, 241, 0.2);
+          }
+        }
+        
+        .cortex-node {
+          transition: all 0.3s ease;
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000px;
+        }
+        
+        /* Optimize dragging performance */
+        .cortex-node.react-flow__node-dragging {
+          transition: none;
+          will-change: transform;
+          transform: translateZ(0);
+        }
+        
+        /* Modal specific styles */
+        .modal-overlay {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          z-index: 9999 !important;
+          background: rgba(0, 0, 0, 0.5) !important;
+          cursor: pointer !important;
+          overflow: hidden !important;
+        }
+        
+        .modal-content {
+          position: fixed !important;
+          top: 50% !important;
+          left: 50% !important;
+          transform: translate(-50%, -50%) !important;
+          z-index: 10000 !important;
+          background: white !important;
+          border-radius: 8px !important;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+          max-width: 500px !important;
+          width: calc(100% - 40px) !important;
+          max-height: 80vh !important;
+          overflow-y: auto !important;
+          cursor: default !important;
+          pointer-events: auto !important;
+        }
+      `}</style>
     </section>
   );
 };

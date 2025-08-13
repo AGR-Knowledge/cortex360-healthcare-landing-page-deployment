@@ -2,6 +2,9 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import { RiAiGenerate } from "react-icons/ri";
+import { SiPagespeedinsights } from "react-icons/si";
+import { MdPrivacyTip } from "react-icons/md";
 import Link from "next/link";
 
 // icons
@@ -45,7 +48,7 @@ type Props = {
 };
 
 const ChatbotHero = ({ hero }: Props) => {
-  const { image0,title,image_t, title1,image_t1,title3,image_t3, details, action_btn, features, image1} =
+  const { image0, title, image_t, title1, image_t1, title3, image_t3, details, action_btn, features, image1 } =
     hero.data;
 
   const containerRef = useRef<HTMLDivElement>(null!);
@@ -72,43 +75,25 @@ const ChatbotHero = ({ hero }: Props) => {
           />
           {/* Title with icon  title_t imgs */}
           <div className="flex items-center gap-4 mb-8 mt-20">
-            <Image
-              src="/assets/imgs/hero/chatbot/image_t.png"
-              width={40}
-              height={30}
-              alt="title icon"
-              className="min-w-[40px] min-h-[40px] object-contain"
-            />
+            <RiAiGenerate size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
             <h1 className="text-[26px] md:text-[40px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px]">
               {title}
             </h1>
           </div>
           {/* Title with icon title_t1 imgs */}
           <div className="flex items-center gap-4 mb-8">
-            <Image
-              src="/assets/imgs/hero/chatbot/image_t1.png"
-              width={40}
-              height={30}
-              alt="title1 icon"
-              className="min-w-[40px] min-h-[40px] object-contain"
-            />           
+            <SiPagespeedinsights size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
             <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px]">
               {title1}
             </h1>
-          </div>  
+          </div>
           {/* Title with icon title_t3 imgs */}
           <div className="flex items-center gap-4 mb-8">
-            <Image
-              src="/assets/imgs/hero/chatbot/image_t3.png"
-              width={40}
-              height={30}
-              alt="title3 icon"
-              className="min-w-[40px] min-h-[40px] object-contain"
-            />
+            <MdPrivacyTip size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
             <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px]">
               {title3}
             </h1>
-          </div>  
+          </div>
           <p className="mt-[100px] text-[18px] xl:text-[20px] leading-[1.4] max-w-[856px]">
             {details}
           </p>
@@ -117,7 +102,7 @@ const ChatbotHero = ({ hero }: Props) => {
               <Link
                 href={action_btn.link}
                 className={cn(
-                  buttonVariants({ variant: "primary2", size:"sm" }),
+                  buttonVariants({ variant: "primary2", size: "sm" }),
                   "border border-border rounded-lg w-full"
                 )}
               >
@@ -173,7 +158,7 @@ const ChatbotHero = ({ hero }: Props) => {
             data-delay="0.6"
             data-fade-offset="0"
           >
-            
+
           </div>
         </div>
       </div>
