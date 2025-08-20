@@ -3,8 +3,10 @@
 import { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Image from "next/image";
-import Link from "next/link";
 import { ReactFlow, Node, Edge, Controls, Background, useNodesState, useEdgesState, addEdge, Connection, Handle, Position, ConnectionMode } from 'reactflow';
+
+// context
+import { useContact } from "@/context/contact.context";
 import 'reactflow/dist/style.css';
 
 // React Icons
@@ -74,7 +76,10 @@ const LeftNode = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative">
+    <div
+      className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative cursor-pointer"
+      onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
+    >
       <Handle type="source" position={Position.Right} className="invisible" />
 
       {/* Header with title */}
@@ -87,20 +92,12 @@ const LeftNode = ({ data }: { data: any }) => {
         {getIcon(data.iconType)}
       </div>
 
-      {/* Footer with description */}
-      <div className="px-4 pb-4">
-        <p className="text-xs text-gray-600 leading-tight text-center">
-          {data.description.length > 80 ? `${data.description.substring(0, 80)}...` : data.description}
-        </p>
+      {/* Learn More Button Section */}
+      <div className="px-4 pb-4 flex justify-center">
+        <div className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-md transition-colors duration-200 shadow-sm font-medium">
+          Learn More
+        </div>
       </div>
-
-      {/* Button in bottom right corner */}
-      <button
-        onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
-        className="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md transition-colors duration-200 shadow-sm font-medium"
-      >
-        Learn More
-      </button>
     </div>
   );
 };
@@ -121,7 +118,10 @@ const RightNode = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative">
+    <div
+      className="custom-node bg-white rounded-lg shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 min-w-[220px] overflow-hidden relative cursor-pointer"
+      onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
+    >
       <Handle type="source" position={Position.Left} className="invisible" />
 
       {/* Header with title */}
@@ -134,20 +134,12 @@ const RightNode = ({ data }: { data: any }) => {
         {getIcon(data.iconType)}
       </div>
 
-      {/* Footer with description */}
-      <div className="px-4 pb-4">
-        <p className="text-xs text-gray-600 leading-tight text-center">
-          {data.description.length > 80 ? `${data.description.substring(0, 80)}...` : data.description}
-        </p>
+      {/* Learn More Button Section */}
+      <div className="px-4 pb-4 flex justify-center">
+        <div className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-md transition-colors duration-200 shadow-sm font-medium">
+          Learn More
+        </div>
       </div>
-
-      {/* Button in bottom right corner */}
-      <button
-        onClick={() => data.onButtonClick && data.onButtonClick(data.title)}
-        className="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md transition-colors duration-200 shadow-sm font-medium"
-      >
-        Learn More
-      </button>
     </div>
   );
 };
@@ -167,7 +159,7 @@ const CortexNode = ({ data }: { data: any }) => {
 };
 
 // Modal Portal Component
-const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; onClose: () => void; title: string; nodeData?: any }) => {
+const ModalPortal = ({ isOpen, onClose, title, nodeData, openContactModal, setIsModalOpen }: { isOpen: boolean; onClose: () => void; title: string; nodeData?: any; openContactModal: () => void; setIsModalOpen: (open: boolean) => void }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -201,7 +193,9 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; on
         right: 0,
         bottom: 0,
         zIndex: 9999,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -214,8 +208,8 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; on
         style={{
           position: 'relative',
           backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          borderRadius: '16px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)',
           maxWidth: '600px',
           width: 'calc(100% - 40px)',
           maxHeight: '80vh',
@@ -229,7 +223,7 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; on
           <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+            className="text-gray-500 hover:text-gray-700 text-2xl font-bold hover:bg-gray-100 p-2 rounded-full transition-colors duration-200"
           >
             ×
           </button>
@@ -291,13 +285,19 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; on
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 justify-end">
               {nodeData.buttons.map((button: any, index: number) => (
                 <button
                   key={index}
-                  className={`px-6 py-3 rounded-lg font-medium transition-colors ${index === 0
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  onClick={() => {
+                    if (button.text === 'Book a Demo!') {
+                      openContactModal();
+                      setIsModalOpen(false);
+                    }
+                  }}
+                  className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${index === 0
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800 hover:bg-gray-300'
                     }`}
                 >
                   {button.text}
@@ -317,15 +317,6 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData }: { isOpen: boolean; on
             </ul>
           </div>
         )}
-
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -351,6 +342,7 @@ const ChatbotCounter = ({ counter }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null!);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string>('');
+  const { openContactModal } = useContact();
 
   const handleNodeButtonClick = (nodeTitle: string) => {
     setSelectedNode(nodeTitle);
@@ -377,7 +369,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'clinical-trial',
       type: 'left',
-      position: { x: -50, y: 100 },
+      position: { x: 50, y: 80 },
       data: {
         title: 'Clinical Trial Setup: The Hidden Burden',
         iconType: 'clinical-trial',
@@ -395,8 +387,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Eliminates compliance errors in form creation'
           ],
           buttons: [
-            { text: 'Generate Sample CRF', action: 'generate-crf' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'Generate Sample CRF', action: 'generate-crf' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/clinical_trial_logo.png'
         }
@@ -405,7 +397,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'tender-analyzer',
       type: 'left',
-      position: { x: -80, y: 300 },
+      position: { x: 20, y: 280 },
       data: {
         title: 'AI-Assisted Tender Analyzer',
         iconType: 'tender-analyzer',
@@ -425,8 +417,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Levels the playing field against data-driven competitors'
           ],
           buttons: [
-            { text: 'View sample summary card for a tender', action: 'view-sample' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'View sample summary card for a tender', action: 'view-sample' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/tender_analyzer_logo.png'
         }
@@ -435,7 +427,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'dashboard-generation',
       type: 'left',
-      position: { x: -60, y: 500 },
+      position: { x: 50, y: 480 },
       data: {
         title: 'Natural Language Dashboard Generated',
         iconType: 'dashboard-generation',
@@ -455,8 +447,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Uncover root causes behind every metric for deeper understanding'
           ],
           buttons: [
-            { text: 'View sample', action: 'view-sample' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'View sample', action: 'view-sample' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/dashboard_generation_logo.png'
         }
@@ -466,7 +458,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'demand-forecasting',
       type: 'right',
-      position: { x: 900, y: 100 },
+      position: { x: 1000, y: 80 },
       data: {
         title: 'Advanced Demand & Inventory Forecasting',
         iconType: 'demand-forecasting',
@@ -486,8 +478,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Reduces manual effort and error'
           ],
           buttons: [
-            { text: 'View Sample', action: 'view-sample' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'View Sample', action: 'view-sample' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/inventory_forecasting_logo.png'
         }
@@ -496,7 +488,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'conversational-intelligence',
       type: 'right',
-      position: { x: 920, y: 300 },
+      position: { x: 1100, y: 280 },
       data: {
         title: 'Conversational Data Intelligence',
         iconType: 'conversational-intelligence',
@@ -516,8 +508,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Unlocks hidden knowledge and drives smarter decisions'
           ],
           buttons: [
-            { text: 'Experience Bot!', action: 'experience-bot' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'Experience Bot!', action: 'experience-bot' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/data_intelligence_logo.png'
         }
@@ -526,7 +518,7 @@ const ChatbotCounter = ({ counter }: Props) => {
     {
       id: 'sales-tracking',
       type: 'right',
-      position: { x: 880, y: 500 },
+      position: { x: 1000, y: 480 },
       data: {
         title: 'Intelligent Secondary Sales Tracking',
         iconType: 'sales-tracking',
@@ -546,8 +538,8 @@ const ChatbotCounter = ({ counter }: Props) => {
             'Reduces compliance risk with traceable, audit-ready reporting'
           ],
           buttons: [
-            { text: 'View Secondary Sales Report', action: 'view-report' },
-            { text: 'Automate this!', action: 'automate' }
+            // { text: 'View Secondary Sales Report', action: 'view-report' },
+            { text: 'Book a Demo!', action: 'automate' }
           ],
           image: '/assets/imgs/pharma/secondary_sales_logo.png'
         }
@@ -672,10 +664,10 @@ const ChatbotCounter = ({ counter }: Props) => {
   );
 
   return (
-    <section className="pt-[53px] md:pt-[73px] xl:pt-[93px] 2xl:pt-[123px]">
+    <section className="w-full mt-[3rem] px-[3rem]">
       <div className="w-full text-[16px] has_fade_anim" ref={containerRef}>
-        <div className="mt-[32px] 2xl:mt-[62px] grid gap-[20px] grid-cols-1 2xl:grid-cols-1">
-          <div className="bg-sec_bg-2 rounded-theme flex flex-col justify-start px-[30px] 2xl:px-[80px] py-[56px] w-full max-w-none mx-auto min-h-[600px] 2xl:min-h-[700px]">
+        <div className="grid grid-cols-1 2xl:grid-cols-1">
+          <div className="bg-sec_bg-2 rounded-theme flex flex-col justify-start py-[56px] w-full max-w-none mx-auto min-h-[600px] 2xl:min-h-[700px]">
             <TitleSection2
               title={title}
               details={details}
@@ -722,7 +714,7 @@ const ChatbotCounter = ({ counter }: Props) => {
               </ReactFlow>
             </div>
 
-            <div className="mb-[10px] md:mb-[60px]">
+            {/* <div className="mb-[10px] md:mb-[60px]">
               <div className="mt-[3px] has_fade_anim">
                 {apps.buttons && apps.buttons.length && (
                   <div className="mt-[32px]">
@@ -731,20 +723,18 @@ const ChatbotCounter = ({ counter }: Props) => {
                         key={`apps_button-${i}`}
                         className="mt-[20px] first:mt-0"
                       >
-                        <Link href={item.link}>
-                          {/* Button content */}
-                        </Link>
+                        Button content can be added here if needed
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div className="flex flex-wrap gap-[20px] rounded-theme w-full md:w-[700px] lg:w-[785px] mx-auto relative justify-center lg:justify-between z-[1]">
-            {/* Counter section can be added here if needed */}
-          </div>
+          {/* <div className="flex flex-wrap gap-[20px] rounded-theme w-full md:w-[700px] lg:w-[785px] mx-auto relative justify-center lg:justify-between z-[1]">
+            Counter section can be added here if needed
+          </div> */}
         </div>
       </div>
 
@@ -755,6 +745,8 @@ const ChatbotCounter = ({ counter }: Props) => {
           onClose={() => setIsModalOpen(false)}
           title={selectedNode}
           nodeData={nodes.find(node => node.data.title === selectedNode)?.data.fullData}
+          openContactModal={openContactModal}
+          setIsModalOpen={setIsModalOpen}
         />
       )}
 

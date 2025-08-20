@@ -53,9 +53,9 @@ const ChatbotFAQ = ({ faq }: Props) => {
   );
 
   return (
-    <section ref={containerRef}>
+    <section ref={containerRef} className="w-full mt-[3rem] px-[3rem]">
       <div className="grid gap-[20px] grid-cols-1 lg:grid-cols-[1fr_395px] xl:grid-cols-[1fr_495px] 2xl:grid-cols-[1fr_695px]">
-        <div className="bg-sec_bg-2 rounded-theme pt-[48px] md:pt-[68px] xl:pt-[88px] 2xl:pt-[118px] px-[20px] xl:px-[70px] 2xl:px-[130px] sec_space_bottom2">
+        <div className="bg-sec_bg-2 rounded-theme pt-[48px] md:pt-[68px] xl:pt-[88px] 2xl:pt-[118px] px-[25px] md:px-[30px] xl:px-[70px] 2xl:px-[130px] sec_space_bottom2">
           <Title1 text={title} className="max-w-[510px] has_fade_anim" />
           <div className="mt-[35px] 2xl:mt-[55px] has_fade_anim">
             {items && items.length && (

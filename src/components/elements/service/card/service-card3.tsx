@@ -1,14 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
-
-// icons
-import { FaArrowRight } from "react-icons/fa6";
-
-// lib
-import { cn } from "@/lib/utils";
-
-// shadcn components
-import { buttonVariants } from "@/components/ui/button";
 
 type Props = {
   service: {
@@ -38,18 +28,6 @@ const ServiceCard3 = ({ service }: Props) => {
           {title}
         </h3>
         <p className="mt-[20px]">{short_description}</p>
-        <Link
-          href="#"
-          className={cn(
-            buttonVariants({ variant: "normal", size: "auto" }),
-            "mt-[31px] uppercase text-[14px]"
-          )}
-        >
-          Read more{" "}
-          <span className="rtl_y">
-            <FaArrowRight className="w-[13px] h-[14px]" />
-          </span>
-        </Link>
       </div>
     </div>
   );

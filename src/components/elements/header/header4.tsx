@@ -11,6 +11,9 @@ import { MenuDataType } from "@/types";
 // shadcn components
 import { Button } from "@/components/ui/button";
 
+// context
+import { useContact } from "@/context/contact.context";
+
 // components
 import Logo from "../common/logo";
 import Offcanvas1 from "../offcanvas/offcanvas1";
@@ -22,6 +25,7 @@ type Props = {
 
 const Header4 = ({ headerNav }: Props) => {
   const [scroll, setScroll] = useState<boolean>(false);
+  const { openContactModal } = useContact();
 
   useEffect(() => {
     window.addEventListener("scroll", scrollHeader);
@@ -47,14 +51,14 @@ const Header4 = ({ headerNav }: Props) => {
           <div className="flex-shrink-0">
             <Logo />
           </div>
-          <div className="hidden xl:flex justify-center flex-1 px-4">
+          {/* <div className="hidden xl:flex justify-center flex-1 px-4">
             <Menu3 headerNav={headerNav} />
-          </div>
+          </div> */}
           <div className="flex items-center gap-5">
             <Button
               variant="primary3"
               size="sm"
-              onClick={() => window.open("https://agrknowledge.com", "_blank")}
+              onClick={openContactModal}
             >
               <span className="btn-span uppercase" data-text="Book a Demo">
                 Book a Demo

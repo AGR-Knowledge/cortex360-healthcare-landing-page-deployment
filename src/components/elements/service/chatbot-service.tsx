@@ -51,9 +51,9 @@ const ChatbotService = ({ service, services }: Props) => {
     : [title, ""];
 
   return (
-    <section className="pt-[53px] md:pt-[73px] xl:pt-[93px] 2xl:pt-[123px] sec_space_bottom2">
+    <section className="w-full mt-[3rem] px-[3rem]">
       <div
-        className="container 2xl:max-w-[1630px] font-bold"
+        className="font-bold"
         ref={containerRef}
       >
         {/* Main Title with improved styling */}
@@ -76,23 +76,34 @@ const ChatbotService = ({ service, services }: Props) => {
         {/* Service Cards */}
         {services && services.length > 0 && (
           <div className="mt-[43px] 2xl:mt-[63px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[20px]">
-            {services.map((item, i) => (
-              <div
-                key={item.slug}
-                className="has_fade_anim"
-                data-delay={delayTime(i + 1)}
-              >
-                <ServiceCard3 service={item} />
-              </div>
-            ))}
+            {(() => {
+              // Reorder services: first goes to third, third goes to first
+              const reorderedServices = [...services];
+              if (reorderedServices.length >= 3) {
+                const first = reorderedServices[0];
+                const third = reorderedServices[2];
+                reorderedServices[0] = third;  // Third becomes first
+                reorderedServices[2] = first;  // First becomes third
+              }
+
+              return reorderedServices.map((item, i) => (
+                <div
+                  key={item.slug}
+                  className="has_fade_anim"
+                  data-delay={delayTime(i + 1)}
+                >
+                  <ServiceCard3 service={item} />
+                </div>
+              ));
+            })()}
           </div>
         )}
 
         {/* Bottom Block with Subtitle and Image */}
         <div className="mt-[60px] bg-[#150732] rounded-[22px] p-6 flex flex-col-reverse lg:flex-row items-center gap-[40px]">
-          {/* Left side: Title and details */}
-          <div className="lg:w-1/2">
-            <h1 className="text-[55px] text-white !text-white  mb-[10px] mt-3 font-bold">
+          {/* Left side: Title and details - 60% width */}
+          <div className="lg:w-3/5 text-left">
+            <h1 className="text-[55px] text-white !text-white mb-[10px] mt-3 font-bold">
               {service.data.subtitle}
             </h1>
             <h2 className="text-[55px] text-[#FF845E] !text-[#FF845E] mb-[20px] font-bold">
@@ -106,11 +117,11 @@ const ChatbotService = ({ service, services }: Props) => {
             </p>
           </div>
 
-          {/* Right side: Image */}
-          <div className="lg:w-1/2 flex justify-end pr-8">
+          {/* Right side: Image - 40% width */}
+          <div className="lg:w-2/5 flex justify-center">
             <img
-              src={service.data.background_image}
-              alt="illustration"
+              src="/assets/imgs/pharma/cortex-brain-chart.png"
+              alt="Cortex 360 Brain Chart"
               className="max-w-[350px] rounded-xl object-cover"
             />
           </div>

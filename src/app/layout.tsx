@@ -1,4 +1,5 @@
 import { AppContextProvider } from "@/context/app.context";
+import { ContactProvider } from "@/context/contact.context";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import navigation from "@/config/navigation.json";
@@ -9,6 +10,7 @@ import Footer2 from "@/components/elements/footer/footer2";
 import ScrollSmootherComponent from "@/components/tools/scroll-smoother";
 import ToolsComponent from "@/components/tools";
 import ScrollTop from "@/components/tools/scroll-top";
+import ContactModal from "@/components/elements/contact/contact-modal";
 
 // styles
 import "@/style/globals.css";
@@ -33,23 +35,26 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning={true} dir="ltr">
         <AppContextProvider>
-          <div className="tropiline-regular root-layout" theme-setting="style-4">
-            <ScrollSmootherComponent />
-            <ToolsComponent />
-            <ScrollTop />
-            <Header4 headerNav={navigation.header} />
-            <div id="smooth-wrapper">
-              <div id="smooth-content">
-                <div className="pt-[100px] max-w-[1920px] px-[15px] lg:px-[30px] mx-auto">
-                  {children}
+          <ContactProvider>
+            <div className="tropiline-regular root-layout" theme-setting="style-4">
+              <ScrollSmootherComponent />
+              <ToolsComponent />
+              <ScrollTop />
+              <Header4 headerNav={navigation.header} />
+              <ContactModal />
+              <div id="smooth-wrapper">
+                <div id="smooth-content">
+                  <div className="pt-[100px] max-w-[1920px] px-[15px] lg:px-[30px] mx-auto">
+                    {children}
+                  </div>
+                  <Footer2 footerNav={navigation.footer2} />
                 </div>
-                <Footer2 footerNav={navigation.footer2} />
               </div>
+
+              <SpeedInsights />
+              <Analytics />
             </div>
-            
-            <SpeedInsights />
-            <Analytics />
-          </div>
+          </ContactProvider>
         </AppContextProvider>
       </body>
     </html>

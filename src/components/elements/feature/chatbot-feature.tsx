@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { SiGooglesearchconsole } from "react-icons/si";
-import { IoMdChatbubbles } from "react-icons/io";
-import { HiOutlineCursorClick } from "react-icons/hi";
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+// context
+import { useContact } from "@/context/contact.context";
 
 // gsap
 import { useGSAP } from "@gsap/react";
@@ -25,18 +25,13 @@ import { buttonVariants } from "@/components/ui/button";
 // components
 import Title1 from "@/components/shared/title/title1";
 
-// Sample data for the chart
+// Sample data for the chart - Store Performance Analysis
 const chartData = [
-  { sku: 'SKU-001', daysToExpiry: 5, quantity: 150 },
-  { sku: 'SKU-002', daysToExpiry: 8, quantity: 200 },
-  { sku: 'SKU-003', daysToExpiry: 12, quantity: 75 },
-  { sku: 'SKU-004', daysToExpiry: 15, quantity: 300 },
-  { sku: 'SKU-005', daysToExpiry: 18, quantity: 120 },
-  { sku: 'SKU-006', daysToExpiry: 22, quantity: 180 },
-  { sku: 'SKU-007', daysToExpiry: 25, quantity: 90 },
-  { sku: 'SKU-008', daysToExpiry: 28, quantity: 250 },
-  { sku: 'SKU-009', daysToExpiry: 30, quantity: 160 },
-  { sku: 'SKU-010', daysToExpiry: 35, quantity: 110 },
+  { metric: 'Unique Drugs', highPerformers: 367, lowPerformers: 112, unit: 'x10' },
+  { metric: 'Revenue/Patient', highPerformers: 209, lowPerformers: 206, unit: '$' },
+  { metric: 'Inventory Qty', highPerformers: 362, lowPerformers: 125, unit: 'x100' },
+  { metric: 'Bills', highPerformers: 161, lowPerformers: 28, unit: 'x100' },
+  { metric: 'Store Manager %', highPerformers: 100, lowPerformers: 50, unit: '%' },
 ];
 
 type Props = {
@@ -53,22 +48,26 @@ type Props = {
       subtitle: string;
       subtitle1: string;
       subtitle2: string;
+      subtitle3: string;
+      subtitle4: string;
+      subtitle5: string;
       feature_items: {
         icon: string;
         text: string;
       }[];
-      subtitle3: string;
       action_btn: ActionBtnType;
     };
   };
 };
 
 const ChatbotFeature = ({ feature }: Props) => {
-  const { image, title3, details, image1, image2, items, subtitle, subtitle1, subtitle2, feature_items, subtitle3, action_btn } =
+  const { image, title3, details, image1, image2, items, subtitle, subtitle1, subtitle2, subtitle3, subtitle4, subtitle5, feature_items, action_btn } =
     feature.data;
 
   const containerRef = useRef<HTMLDivElement>(null!);
-  const [searchQuery, setSearchQuery] = useState("top 10 SKU's nearing expiry in zone A");
+  const buttonRef = useRef<HTMLButtonElement>(null!);
+  const [searchQuery, setSearchQuery] = useState("Analyse the high-performing and low-performing stores in terms of revenue. Identify the key success factors present in the high-revenue stores that are missing in the low-revenue ones and could potentially be adopted to enhance their performance.");
+  const { openContactModal } = useContact();
 
   useGSAP(
     () => {
@@ -77,146 +76,397 @@ const ChatbotFeature = ({ feature }: Props) => {
     { scope: containerRef }
   );
 
+  // Trigger bubble animation periodically
+  useEffect(() => {
+    const triggerBubbles = () => {
+      if (buttonRef.current) {
+        buttonRef.current.classList.add('animate');
+        setTimeout(() => {
+          if (buttonRef.current) {
+            buttonRef.current.classList.remove('animate');
+          }
+        }, 750);
+      }
+    };
+
+    // Initial delay, then repeat every 6 seconds
+    const timer = setTimeout(() => {
+      triggerBubbles();
+      const interval = setInterval(triggerBubbles, 6000);
+      return () => clearInterval(interval);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section
-      className="w-full"
+      className="w-full mt-[3rem] px-[3rem]"
       ref={containerRef}
     >
-      <div className="bg-sec_bg-2 w-full rounded-theme px-[30px] md:px-[50px] xl:px-[70px] 2xl:px-[130px] pt-[20px] md:pt-[30px] xl:pt-[40px]  flex flex-col items-center justify-center text-right 2xl:pt-[5px] pb-[60px] md:pb-[10px] xl:pb-[50px] 2xl:pb-[1 0px] min-h-[500px] md:min-h-[600px] xl:min-h-[700px] sec_space_bottom2">
+      <div className="bg-sec_bg-2 w-full rounded-theme pt-[20px] md:pt-[30px] xl:pt-[40px] px-[30px] md:px-[50px] xl:px-[70px] 2xl:px-[130px] flex flex-col items-center justify-center text-right 2xl:pt-[5px] pb-[60px] md:pb-[10px] xl:pb-[50px] 2xl:pb-[1 0px] min-h-[500px] md:min-h-[600px] xl:min-h-[700px] sec_space_bottom2">
         {/* <Title1 text={title} className="has_fade_anim text-[40px]" /> */}
         {/* <Title1 text={title2} className="has_fade_anim text-[20px]" /> */}
         {/* Top Title Image (full width) */}
-        <div className="w-full flex justify-center mb-10">
-          <Image
-            width={950}
-            height={150}
-            src="/assets/imgs/feature/chatbot/img-s-19.png"
-            className="w-full max-w-[950px] h-auto object-contain"
-            alt="title image"
-          />
+        <div className="w-full flex justify-center mb-10 mt-8">
+          {/* Slogan Component */}
+          <div className="text-center max-w-[950px]">
+            {/* Top Line */}
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-black mb-4 drop-shadow-sm">
+              From Questions to Insights
+            </h2>
+
+            {/* Bottom Line */}
+            <div className="relative">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-2 drop-shadow-sm">
+                <span className="text-[#1A283C]">Don't guess it- </span>
+                <span className="text-[#F08060] animate-slide-in-left font-bold">Just Cortex it !</span>
+              </h3>
+
+              {/* Underline */}
+              <div className="w-full h-0.5 bg-[#F08060] mx-auto"></div>
+            </div>
+          </div>
         </div>
-        <div>
+        <div className="text-center">
           {/* Title3 directly below top image */}
-          <Title1 text={title3} className="text-[18px] font-bold !font-bold mb-6 text-center md:text-left" />
+          <Title1 text={title3} className="text-[18px] font-bold !font-bold mb-6 text-center" />
+          {/* <Title1 text={title3} className="text-[18px] font-bold !font-bold mb-6 " /> */}
+          <p className="text-[16px] md:text-[18px] leading-relaxed text-gray-700 mb-6 max-w-4xl mx-auto">{details}</p>
+
+          {items && items.length > 0 && (
+            <div className="space-y-4">
+              {items.map((item, i) => {
+                // Split the text to apply orange color to "In Minutes"
+                const parts = item.split('In Minutes.');
+                if (parts.length > 1) {
+                  return (
+                    <p key={i} className="text-center">
+                      {parts[0]}
+                      <span className="text-orange-500 font-bold">In Minutes.</span>
+                    </p>
+                  );
+                }
+                return (
+                  <p
+                    key={i}
+                    className="[&>span]:font-bold [&>span]:text-primary"
+                    dangerouslySetInnerHTML={markdownify(item)}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
-        <div className="flex flex-col md:flex-row items-start justify-between gap-10 w-full text-left mt-10">
-          {/* Left: Search Bar, Answer, and Chart */}
-          <div className="w-full md:w-1/2">
-            <div className="bg-gray-50 rounded-xl p-6 shadow-lg space-y-6">
-              {/* Search Bar */}
-              <div className="bg-white rounded-lg p-4 shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Ask a question..."
-                    />
-                  </div>
-                  <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+        {/* Query Analysis Container - Groups all three sections together */}
+        <div className="w-full mb-10 mt-4 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 shadow-lg">
+          {/* Container Header */}
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold text-blue-800 mb-2">AI Query Analysis</h3>
+            <p className="text-sm text-blue-600">Complete analysis from question to insights</p>
+          </div>
+
+          {/* 1. Query Box */}
+          <div className="w-full mb-6">
+            <div className="bg-white rounded-xl p-6 shadow-md border border-blue-100">
+              <div className="space-y-3">
+                <div className="flex-1">
+                  <textarea
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none leading-relaxed"
+                    placeholder="Ask a question..."
+                    rows={2}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    ref={buttonRef}
+                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors animate-button-click"
+                  >
+                    Cortex it!
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Answer Text */}
-              <div className="bg-white rounded-lg p-4 shadow-md">
-                <p className="text-gray-700 text-sm leading-relaxed">
-                  Based on the current inventory data for Zone A, here are the top 10 SKUs that are nearing their expiry date.
-                  These items require immediate attention to prevent waste and optimize inventory management.
-                </p>
-                <p className="text-gray-700 text-sm leading-relaxed mt-2">
-                  The data shows SKU-001 has the highest urgency with only 5 days remaining, followed by SKU-002 with 8 days.
-                  Consider implementing a priority-based action plan for these items.
+          {/* 2. Insights and Graph Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            {/* Left: Insights */}
+            <div className="bg-white rounded-lg p-6 shadow-md text-left">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Analysis of High-Performing vs. Low-Performing Stores</h3>
+
+              <h4 className="text-md font-semibold text-gray-700 mb-3">Key Performance Metrics</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200">
+                      <th className="text-left py-2 px-3 font-semibold text-gray-700">Metric</th>
+                      <th className="text-center py-2 px-3 font-semibold text-gray-700">High Performers</th>
+                      <th className="text-center py-2 px-3 font-semibold text-gray-700">Low Performers</th>
+                      <th className="text-center py-2 px-3 font-semibold text-gray-700">Difference</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-3 font-medium">Unique Drugs</td>
+                      <td className="text-center py-2 px-3 text-green-600 font-semibold">3,670</td>
+                      <td className="text-center py-2 px-3 text-red-600 font-semibold">1,120</td>
+                      <td className="text-center py-2 px-3 text-blue-600 font-semibold">+228%</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-3 font-medium">Revenue/Patient</td>
+                      <td className="text-center py-2 px-3 text-green-600 font-semibold">$209</td>
+                      <td className="text-center py-2 px-3 text-red-600 font-semibold">$206</td>
+                      <td className="text-center py-2 px-3 text-blue-600 font-semibold">+1.5%</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-3 font-medium">Inventory Qty</td>
+                      <td className="text-center py-2 px-3 text-green-600 font-semibold">36,200</td>
+                      <td className="text-center py-2 px-3 text-red-600 font-semibold">12,500</td>
+                      <td className="text-center py-2 px-3 text-blue-600 font-semibold">+189%</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-3 font-medium">Bills</td>
+                      <td className="text-center py-2 px-3 text-green-600 font-semibold">16,100</td>
+                      <td className="text-center py-2 px-3 text-red-600 font-semibold">2,800</td>
+                      <td className="text-center py-2 px-3 text-blue-600 font-semibold">+475%</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-3 font-medium">Store Manager %</td>
+                      <td className="text-center py-2 px-3 text-green-600 font-semibold">100%</td>
+                      <td className="text-center py-2 px-3 text-red-600 font-semibold">50%</td>
+                      <td className="text-center py-2 px-3 text-blue-600 font-semibold">+100%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h4 className="text-md font-semibold text-gray-700 mb-2 mt-4">Key Success Factors</h4>
+              <ul className="text-xs space-y-1 text-gray-600">
+                <li>• <strong>Product Variety:</strong> High performers offer 228% more unique drugs (3,670 vs 1,120)</li>
+                <li>• <strong>Inventory Management:</strong> 189% more inventory items with better variety</li>
+                <li>• <strong>Transaction Volume:</strong> High performers process 475% more bills (16,100 vs 2,800)</li>
+                <li>• <strong>Store Management:</strong> 100% of high performers have dedicated managers vs 50%</li>
+                <li>• <strong>Revenue Efficiency:</strong> Similar revenue per patient ($209 vs $206) but much higher volume</li>
+                <li>• <strong>Operational Scale:</strong> High performers operate at 3.2x the scale of low performers</li>
+                <li>• <strong>Technology Integration:</strong> 85% of high performers use advanced inventory systems</li>
+              </ul>
+            </div>
+
+            {/* Right: Chart */}
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Store Performance Comparison</h3>
+
+              {/* Chart Legend */}
+              <div className="flex justify-center items-center gap-6 mb-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span className="font-medium text-gray-700">High Performers</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <span className="font-medium text-gray-700">Low Performers</span>
+                </div>
+              </div>
+
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="metric"
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: '#6b7280' }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: '#6b7280', fontSize: 10 }}
+                      tickFormatter={(value) => {
+                        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+                        if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+                        return value.toString();
+                      }}
+                    />
+                    <Tooltip
+                      formatter={(value, name) => {
+                        if (name === 'highPerformers') return [value, 'High Performers'];
+                        if (name === 'lowPerformers') return [value, 'Low Performers'];
+                        return [value, name];
+                      }}
+                      labelFormatter={(label) => `Metric: ${label}`}
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Bar
+                      dataKey="highPerformers"
+                      fill="#10B981"
+                      name="High Performers"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="lowPerformers"
+                      fill="#EF4444"
+                      name="Low Performers"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Chart Footer Info */}
+              <div className="mt-4 text-center text-xs text-gray-500">
+                <p>Data shows significant performance gaps between high and low performing stores</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Subtitle and Complex Queries Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
+          {/* Left: Subtitle */}
+          <div className="flex flex-col justify-center text-left">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle1}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle2}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle3}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle4}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-[60px] h-[60px] bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-5l-2-2H5a2 2 0 00-2 2z" />
+                </svg>
+              </div>
+              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E] text-left">
+                {subtitle5}
+              </h1>
+            </div>
+          </div>
+
+          {/* Right: Complex Queries Card */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6 has_fade_anim" data-delay="0.6">
+            <div className="text-center mb-8">
+              <h2 className="text-[28px] md:text-[32px] font-bold text-gray-800 mb-3">
+                Our AI Can Answer Complex Queries Like...
+              </h2>
+              <p className="text-[16px] text-gray-600">
+                Custom-fit AI built for healthcare & pharma decision-making
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sales & Market Mix Insights */}
+              <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 text-left">
+                <h3 className="text-[18px] font-bold text-gray-800 mb-3">Sales & Market Mix Insights</h3>
+                <p className="text-[14px] text-gray-700 leading-relaxed">
+                  "Identify Tier-2 city stores where ethical drugs contribute over 65% of total revenue despite being less than 40% of SKUs, and compare 6-month growth rates with generics."
                 </p>
               </div>
 
-              {/* Chart */}
-              <div className="bg-white rounded-lg p-4 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pt-4 text-center">SKU Expiry Timeline - Zone A</h3>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="sku"
-                        angle={-45}
-                        textAnchor="end"
-                        height={80}
-                        fontSize={10}
-                      />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value, name) => [value, name === 'daysToExpiry' ? 'Days to Expiry' : 'Quantity']}
-                        labelFormatter={(label) => `SKU: ${label}`}
-                      />
-                      <Bar dataKey="daysToExpiry" fill="#FF845E" name="Days to Expiry" />
-                    </BarChart>
-                  </ResponsiveContainer>
+              {/* Price & Profit Optimization */}
+              <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 text-left">
+                <h3 className="text-[18px] font-bold text-gray-800 mb-3">Price & Profit Optimization</h3>
+                <p className="text-[14px] text-gray-700 leading-relaxed">
+                  "Show regions where ethical drugs maintain a &gt;20% price premium over generics yet outsell them in units - reveal demand drivers."
+                </p>
+              </div>
+
+              {/* Inventory & Supply Chain Analysis */}
+              <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 text-left">
+                <h3 className="text-[18px] font-bold text-gray-800 mb-3">Inventory & Supply Chain Analysis</h3>
+                <div className="space-y-2">
+                  <p className="text-[14px] text-gray-700 leading-relaxed">
+                    "Identify stores where ethical drugs have higher sell-through rates but suffer 20% more stockouts than generics - recommend inventory reallocation."
+                  </p>
+                  <p className="text-[14px] text-gray-700 leading-relaxed">
+                    "Detect locations where generic overstocking caused expiry losses while ethical drug demand was unmet."
+                  </p>
+                </div>
+              </div>
+
+              {/* Multi-Factor Performance Correlation */}
+              <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 text-left">
+                <h3 className="text-[18px] font-bold text-gray-800 mb-3">Multi-Factor Performance Correlation</h3>
+                <div className="space-y-2">
+                  <p className="text-[14px] text-gray-700 leading-relaxed">
+                    "Compare ethical vs generic drug sales in stores with in-house pharmacists vs those without, and quantify the operational advantage."
+                  </p>
+                  <p className="text-[14px] text-gray-700 leading-relaxed">
+                    "Correlate ethical drug sales growth with marketing spend in regions with recent awareness campaigns - calculate ROI vs generics."
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Right: Text content */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center">
-            {/* <Title1 text={title3} className="text-[18px] font-bold !font-bold mb-6 " /> */}
-            <p className="text-[16px] md:text-[18px] leading-relaxed text-gray-700 mb-6 ">{details}</p>
-
-            {items && items.length > 0 && (
-              <div className="space-y-4">
-                {items.map((item, i) => (
-                  <p
-                    key={i}
-                    className="[&>span]:font-bold [&>span]:text-primary "
-                    dangerouslySetInnerHTML={markdownify(item)}
-                  />
-                ))}
-              </div>
-            )}
-            {/* Title with icon  title_t imgs */}
-            <div className="flex items-center gap-4 mb-8 mt-20 pl-20">
-              <SiGooglesearchconsole size={60} className="min-w-[60px] min-h-[60px] text-gray-600" />
-              <h1 className="text-[26px] md:text-[40px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E]">
-                {subtitle}
-              </h1>
-            </div>
-            {/* Title with icon title_t1 imgs */}
-            <div className="flex items-center gap-4 mb-8 pl-20">
-              <IoMdChatbubbles size={60} className="min-w-[60px] min-h-[60px] text-gray-600" />
-              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E]">
-                {subtitle1}
-              </h1>
-            </div>
-            {/* Title with icon title_t3 imgs */}
-            <div className="flex items-center gap-4 mb-8 pl-20 " >
-              <HiOutlineCursorClick size={60} className="min-w-[60px] min-h-[60px] text-gray-600" />
-              <h1 className="text-[26px] md:text-[30px] lg:text-[28px] xl:text-[32px] 2xl:text-[24px] text-[#FF845E] !text-[#FF845E]">
-                {subtitle2}
-              </h1>
-            </div>
-          </div>
-
         </div>
         {action_btn && action_btn.enable && (
           <div className="mt-[48px] has_fade_anim">
             <h2 className="text-[20px] md:text-[32px] font-semibold text-black text-center">
               Ask. See. Act with <span className="text-[#FF845E] font-bold">AI</span>
             </h2>
-            <Link
-              href={action_btn.link}
+            <button
+              onClick={openContactModal}
               className={cn(buttonVariants({ variant: "primary3" }),
-                "border border-border rounded-lg px-8 py-4 text-lg md:text-xl font-semibold w-auto"
+                "border border-border rounded-lg px-8 py-4 text-lg md:text-xl font-semibold w-auto mt-4"
               )}
             >
               <span className="btn-span uppercase" data-text={action_btn.label}>
                 {action_btn.label}
               </span>
-            </Link>
+            </button>
           </div>
         )}
       </div>
@@ -259,6 +509,132 @@ const ChatbotFeature = ({ feature }: Props) => {
           </div>
         )}
       </div> */}
+
+      {/* Custom CSS for slide-in animation */}
+      <style jsx>{`
+        @keyframes shine {
+          0% {
+            background-position: -200px;
+          }
+          100% {
+            background-position: 200px;
+          }
+        }
+        
+        .animate-slide-in-left {
+          background: linear-gradient(90deg, #F08060 0%, #f7b000 50%, #F08060 100%);
+          background-size: 300px 100%;
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+          -webkit-text-fill-color: transparent;
+          animation: shine 8s linear infinite;
+          filter: drop-shadow(0 0 8px rgba(240, 128, 96, 0.6));
+        }
+        
+        .animate-button-click {
+          position: relative;
+          transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
+          box-shadow: 0 2px 25px rgba(240, 128, 96, 0.5);
+          animation: buttonPulse 6s ease-in-out infinite;
+        }
+        
+        .animate-button-click:before, .animate-button-click:after {
+          position: absolute;
+          content: '';
+          display: block;
+          width: 140%;
+          height: 100%;
+          left: -20%;
+          z-index: -1000;
+          transition: all ease-in-out 0.5s;
+          background-repeat: no-repeat;
+        }
+        
+        .animate-button-click:before {
+          display: none;
+          top: -75%;
+          background-image:  
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, transparent 20%, #f08060 20%, transparent 30%),
+            radial-gradient(circle, #f08060 20%, transparent 20%), 
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, transparent 10%, #f08060 15%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%);
+          background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+        }
+        
+        .animate-button-click:after {
+          display: none;
+          bottom: -75%;
+          background-image:  
+            radial-gradient(circle, #f08060 20%, transparent 20%), 
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, transparent 10%, #f08060 15%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%),
+            radial-gradient(circle, #f08060 20%, transparent 20%);
+          background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+        }
+        
+        @keyframes buttonPulse {
+          0%, 70% {
+            transform: scale(1);
+          }
+          75% {
+            transform: scale(0.95);
+          }
+          80% {
+            transform: scale(1.05);
+          }
+          85% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        
+        @keyframes topBubbles {
+          0% {
+            background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+          }
+          50% {
+            background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;
+          }
+          100% {
+            background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
+            background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+          }
+        }
+        
+        @keyframes bottomBubbles {
+          0% {
+            background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0%;
+          }
+          50% {
+            background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0%;
+          }
+          100% {
+            background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
+            background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+          }
+        }
+        
+        .animate-button-click.animate:before {
+          display: block;
+          animation: topBubbles ease-in-out 0.75s forwards;
+        }
+        
+        .animate-button-click.animate:after {
+          display: block;
+          animation: bottomBubbles ease-in-out 0.75s forwards;
+        }
+      `}</style>
     </section>
   );
 };
