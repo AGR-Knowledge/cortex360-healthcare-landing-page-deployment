@@ -66,64 +66,72 @@ const ChatbotHero = ({ hero }: Props) => {
     { scope: containerRef }
   );
   return (
-    <section className="w-full mt-[3rem] px-[3rem]">
+    <section className="w-full min-w-full max-w-none px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem] mt-[1rem] sm:mt-[1.5rem] md:mt-[2rem] lg:mt-[2.5rem] xl:mt-[3rem] mb-[4rem] sm:mb-[5rem] md:mb-[6rem] lg:mb-[7rem] xl:mb-[8rem]">
       <div
-        className="flex flex-col lg:flex-row gap-[20px]"
+        className="w-full min-w-full max-w-none flex flex-col lg:flex-row gap-[1rem] sm:gap-[1.5rem] md:gap-[2rem] lg:gap-[2.5rem] xl:gap-[3rem]"
         ref={containerRef}
       >
-        <div className="bg-sec_bg-2 rounded-theme pt-[10px] md:pt-[20px] lg:pt-[30px] xl:pt-[40px] 2xl:pt-[50px] pb-[20px] md:pb-[30px] lg:pb-[40px] xl:pb-[50px] px-[25px] md:px-[30px] lg:px-[50px] xl:px-[50px] 2xl:px-[50px] lg:w-2/5">
+        {/* Left Content Section */}
+        <div className="w-full lg:w-2/5 bg-sec_bg-2 rounded-theme pt-[1rem] sm:pt-[1.5rem] md:pt-[2rem] lg:pt-[2.5rem] xl:pt-[3rem] pb-[1.5rem] sm:pb-[2rem] md:pb-[2.5rem] lg:pb-[3rem] xl:pb-[4rem] px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem]">
           {/* Logo Component */}
-          <div className="flex flex-col items-start mb-4">
+          <div className="flex flex-col items-start mb-[1rem] sm:mb-[1.5rem] md:mb-[2rem] lg:mb-[2.5rem]">
             {/* Main Logo */}
-            <div className="flex items-baseline mb-2">
-              <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#F08060]">Cortex</span>
-              <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A283C] ml-2">360</span>
+            <div className="flex items-baseline mb-[0.5rem] sm:mb-[1rem] flex-wrap">
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#F08060]">Cortex</span>
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#1A283C] ml-1 sm:ml-2">360</span>
             </div>
-            <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A283C]">Healthcare</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#1A283C]">Healthcare</span>
 
             {/* Tagline */}
-            <p className="text-lg md:text-xl text-[#1A283C] mt-3 font-normal">Discover. Design. Deploy.</p>
+            <p className="text-base sm:text-lg md:text-xl text-[#1A283C] mt-2 sm:mt-3 font-normal">Discover. Design. Deploy.</p>
 
             {/* Separator Line */}
-            <div className="w-32 h-0.5 bg-[#F08060] mt-3 opacity-80"></div>
+            <div className="w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 h-0.5 bg-[#F08060] mt-2 sm:mt-3 opacity-80"></div>
 
             {/* Platform Description */}
-            <div className="flex items-baseline mt-3 text-left justify-start">
-              <span className="text-xl md:text-2xl font-bold text-[#1A283C] flex-shrink-0">Enterprise AI</span>
-              <span className="text-xl md:text-2xl font-bold text-[#F08060] ml-2 flex-shrink-0">Intelligence Platform</span>
+            <div className="flex items-baseline mt-2 sm:mt-3 text-left justify-start flex-wrap">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#1A283C] flex-shrink-0">Enterprise AI</span>
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#F08060] ml-1 sm:ml-2 flex-shrink-0">Intelligence Platform</span>
             </div>
           </div>
-          {/* Title with icon  title_t imgs */}
-          <div className="flex items-center gap-4 mb-4 mt-[1rem]">
-            <RiAiGenerate size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
-            <h1 className="text-[18px] md:text-[24px] lg:text-[20px] xl:text-[22px] 2xl:text-[18px]">
+
+          {/* Title with icon title_t imgs */}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 mt-[1rem]">
+            <RiAiGenerate size={32} className="min-w-[28px] sm:min-w-[32px] md:min-w-[36px] lg:min-w-[40px] min-h-[28px] sm:min-h-[32px] md:min-h-[36px] lg:min-h-[40px] text-orange-500 flex-shrink-0" />
+            <h1 className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] leading-tight">
               {title}
             </h1>
           </div>
+
           {/* Title with icon title_t1 imgs */}
-          <div className="flex items-center gap-4 mb-4">
-            <SiPagespeedinsights size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
-            <h1 className="text-[18px] md:text-[22px] lg:text-[20px] xl:text-[22px] 2xl:text-[18px]">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">
+            <SiPagespeedinsights size={32} className="min-w-[28px] sm:min-w-[32px] md:min-w-[36px] lg:min-w-[40px] min-h-[28px] sm:min-h-[32px] md:min-h-[36px] lg:min-h-[40px] text-orange-500 flex-shrink-0" />
+            <h1 className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] leading-tight">
               {title1}
             </h1>
           </div>
+
           {/* Title with icon title_t3 imgs */}
-          <div className="flex items-center gap-4 mb-4">
-            <MdPrivacyTip size={40} className="min-w-[40px] min-h-[40px] text-orange-500" />
-            <h1 className="text-[18px] md:text-[22px] lg:text-[20px] xl:text-[22px] 2xl:text-[18px]">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">
+            <MdPrivacyTip size={32} className="min-w-[28px] sm:min-w-[32px] md:min-w-[36px] lg:min-w-[40px] min-h-[28px] sm:min-h-[32px] md:min-h-[36px] lg:min-h-[40px] text-orange-500 flex-shrink-0" />
+            <h1 className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[22px] leading-tight">
               {title3}
             </h1>
           </div>
-          <p className="text-[18px] xl:text-[20px] leading-[1.4] max-w-[856px]">
+
+          {/* Details */}
+          <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] leading-[1.4] max-w-full lg:max-w-[856px]">
             {details}
           </p>
+
+          {/* Action Button */}
           {action_btn && action_btn.enable && (
-            <div className="mt-[0.5rem]">
+            <div className="mt-[1rem] sm:mt-[1.5rem] md:mt-[2rem]">
               <button
                 onClick={openContactModal}
                 className={cn(
                   buttonVariants({ variant: "primary2", size: "sm" }),
-                  "border border-border rounded-lg w-full"
+                  "border border-border rounded-lg w-full text-sm sm:text-base md:text-lg py-2 sm:py-3 md:py-4"
                 )}
               >
                 <span
@@ -135,35 +143,33 @@ const ChatbotHero = ({ hero }: Props) => {
               </button>
             </div>
           )}
+
+          {/* Features List */}
           {features && features.length && (
-            <div className="mt-[44px]">
-              <ul>
+            <div className="mt-[2rem] sm:mt-[2.5rem] md:mt-[3rem] lg:mt-[3.5rem] xl:mt-[4rem]">
+              <ul className="space-y-2 sm:space-y-3">
                 {features.map((item, i) => (
                   <li
                     key={`feature_item-${i}`}
-                    className="text-[18px] leading-[1.44] flex items-center gap-[10px]"
+                    className="text-[14px] sm:text-[16px] md:text-[18px] leading-[1.44] flex items-start gap-[8px] sm:gap-[10px]"
                   >
-                    {/* <Image
-                      width={15}
-                      height={16}
-                      src="/assets/imgs/icon/check-3.png"
-                      className="h-[16px] rtl_y"
-                      alt="icon image"
-                    /> */}
-                    {item}
+                    <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
-        <div className="lg:w-3/5">
+
+        {/* Right Video Section */}
+        <div className="w-full lg:w-3/5 flex-shrink-0">
           <div
-            className="has_fade_anim"
+            className="has_fade_anim w-full"
             data-delay="0.3"
             data-fade-offset="0"
           >
-            <div className="relative rounded-theme overflow-hidden h-[600px] min-h-[600px]">
+            <div className="relative rounded-theme overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] 2xl:h-[650px] min-h-[300px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] 2xl:min-h-[650px]">
               <video
                 ref={(el) => {
                   if (el) {
@@ -186,27 +192,28 @@ const ChatbotHero = ({ hero }: Props) => {
               </video>
 
               {/* Conditional Volume Control Overlay */}
-              <div className="absolute bottom-4 right-4">
+              <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 lg:bottom-5 xl:bottom-6 right-2 sm:right-3 md:right-4 lg:right-5 xl:right-6">
                 <button
                   onClick={() => setIsMuted(!isMuted)}
-                  className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors duration-200"
+                  className="bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 md:p-2.5 lg:p-3 xl:p-3.5 rounded-full transition-colors duration-200"
                   title={isMuted ? "Unmute Video" : "Mute Video"}
                 >
                   {isMuted ? (
-                    <HiVolumeOff className="w-5 h-5" />
+                    <HiVolumeOff className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
                   ) : (
-                    <HiVolumeUp className="w-5 h-5" />
+                    <HiVolumeUp className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
                   )}
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Bottom Spacing */}
           <div
-            className="relative -mt-[80px] rounded-theme hidden md:block has_fade_anim"
+            className="relative -mt-[40px] sm:-mt-[50px] md:-mt-[60px] lg:-mt-[70px] xl:-mt-[80px] 2xl:-mt-[90px] rounded-theme hidden md:block has_fade_anim"
             data-delay="0.6"
             data-fade-offset="0"
           >
-
           </div>
         </div>
       </div>

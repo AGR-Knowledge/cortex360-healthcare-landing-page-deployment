@@ -32,7 +32,7 @@ const Footer2 = ({ footerNav, largeContainer = false, className }: Props) => {
   const { openContactModal } = useContact();
   return (
     <footer className={cn(className)}>
-      <div className={cn("container 2xl:max-w-[91%]")}>
+      <div className={cn("w-full px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem] 2xl:max-w-[91%] 2xl:mx-auto")}>
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-y-[50px] gap-x-[60px] justify-between pt-[58px] pb-[3rem] lg:pt-[78px] 2xl:pt-[128px]">
           <div className="col-span-1 lg:col-span-7">
             <Logo />

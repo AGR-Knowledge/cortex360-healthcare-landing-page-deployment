@@ -51,31 +51,31 @@ const ChatbotService = ({ service, services }: Props) => {
     : [title, ""];
 
   return (
-    <section className="w-full mt-[3rem] px-[3rem]">
+    <section className="w-full px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem] mt-[2rem] sm:mt-[2.5rem] md:mt-[3rem] lg:mt-[3.5rem] xl:mt-[4rem]">
       <div
         className="font-bold"
         ref={containerRef}
       >
-        {/* Main Title with improved styling */}
-        <h1 className="text-left text-[#00253C] text-[34px] md:text-[55px] lg:text-[52px] font-bold mb-3 font-inter ml-20">
+        {/* Main Title with improved responsive styling */}
+        <h1 className="text-left text-[#00253C] text-[20px] sm:text-[24px] md:text-[28px] lg:text-[32px] xl:text-[36px] 2xl:text-[40px] font-bold mb-2 sm:mb-3 font-inter ml-2 sm:ml-4 md:ml-6 lg:ml-8 xl:ml-10">
           Your data lives everywhere.
           <br />
           Insights are trapped, decisions delayed.
         </h1>
 
         {/* Subtitle */}
-        <h2 className="text-center text-[32px] md:text-[45px] lg:text-[55px] font-bold text-[#091E42]  mt-2 font-inter">
+        <h2 className="text-center text-[18px] sm:text-[22px] md:text-[26px] lg:text-[30px] xl:text-[34px] 2xl:text-[38px] font-bold text-[#091E42] mt-2 sm:mt-3 font-inter">
           {title2}
         </h2>
 
         {/* Paragraph below titles */}
-        <p className="text-left text-[18px] font-medium text-gray-600 mt-6 font-inter ml-20 whitespace-nowrap overflow-hidden text-ellipsis">
+        <p className="text-left text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] font-medium text-gray-600 mt-3 sm:mt-4 md:mt-6 font-inter ml-2 sm:ml-4 md:ml-6 lg:ml-8 xl:ml-10 max-w-full lg:max-w-none overflow-hidden text-ellipsis">
           {details}
         </p>
 
         {/* Service Cards */}
         {services && services.length > 0 && (
-          <div className="mt-[43px] 2xl:mt-[63px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[20px]">
+          <div className="mt-[1.5rem] sm:mt-[2rem] md:mt-[2.5rem] lg:mt-[3rem] xl:mt-[3.5rem] 2xl:mt-[4rem] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[1rem] sm:gap-[1.5rem] md:gap-[2rem]">
             {(() => {
               // Reorder services: first goes to third, third goes to first
               const reorderedServices = [...services];
@@ -100,29 +100,29 @@ const ChatbotService = ({ service, services }: Props) => {
         )}
 
         {/* Bottom Block with Subtitle and Image */}
-        <div className="mt-[60px] bg-[#150732] rounded-[22px] p-6 flex flex-col-reverse lg:flex-row items-center gap-[40px]">
+        <div className="mt-[2rem] sm:mt-[2.5rem] md:mt-[3rem] lg:mt-[3.5rem] xl:mt-[4rem] bg-[#150732] rounded-[8px] sm:rounded-[12px] md:rounded-[16px] lg:rounded-[20px] xl:rounded-[22px] p-4 sm:p-5 md:p-6 flex flex-col-reverse lg:flex-row items-center gap-[1.5rem] sm:gap-[2rem] md:gap-[2.5rem] lg:gap-[3rem] xl:gap-[4rem]">
           {/* Left side: Title and details - 60% width */}
-          <div className="lg:w-3/5 text-left">
-            <h1 className="text-[55px] text-white !text-white mb-[10px] mt-3 font-bold">
+          <div className="w-full lg:w-3/5 text-left">
+            <h1 className="text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] xl:text-[40px] 2xl:text-[44px] text-white !text-white mb-[0.5rem] sm:mb-[0.75rem] md:mb-[1rem] mt-2 sm:mt-3 font-bold leading-tight">
               {service.data.subtitle}
             </h1>
-            <h2 className="text-[55px] text-[#FF845E] !text-[#FF845E] mb-[20px] font-bold">
+            <h2 className="text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] xl:text-[40px] 2xl:text-[44px] text-[#FF845E] !text-[#FF845E] mb-[0.75rem] sm:mb-[1rem] md:mb-[1.5rem] font-bold leading-tight">
               {service.data.subtitle0}
             </h2>
-            <h3 className="text-[30px] text-[#FF845E] !text-[#FF845E] mb-[16px] mt-0 font-bold">
+            <h3 className="text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px] 2xl:text-[26px] text-[#FF845E] !text-[#FF845E] mb-[0.75rem] sm:mb-[1rem] md:mb-[1.25rem] mt-0 font-bold leading-tight">
               {service.data.subtitle1}
             </h3>
-            <p className="text-[18px] text-white leading-[28px] mt-10">
+            <p className="text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] text-white leading-[1.4] sm:leading-[1.5] md:leading-[1.6] mt-4 sm:mt-6 md:mt-8">
               {service.data.details1}
             </p>
           </div>
 
           {/* Right side: Image - 40% width */}
-          <div className="lg:w-2/5 flex justify-center">
+          <div className="w-full lg:w-2/5 flex justify-center">
             <img
               src="/assets/imgs/pharma/cortex-brain-chart.png"
               alt="Cortex 360 Brain Chart"
-              className="max-w-[350px] rounded-xl object-cover"
+              className="w-full max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px] rounded-lg sm:rounded-xl object-cover"
             />
           </div>
         </div>

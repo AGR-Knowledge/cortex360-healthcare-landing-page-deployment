@@ -44,7 +44,7 @@ export default function RootLayout({
               <ContactModal />
               <div id="smooth-wrapper">
                 <div id="smooth-content">
-                  <div className="pt-[100px] max-w-[1920px] px-[15px] lg:px-[30px] mx-auto">
+                  <div className="pt-[100px] w-full max-w-none lg:max-w-[1920px] lg:mx-auto">
                     {children}
                   </div>
                   <Footer2 footerNav={navigation.footer2} />

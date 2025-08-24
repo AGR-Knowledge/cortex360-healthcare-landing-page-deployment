@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 // lib
 import { cn } from "@/lib/utils";
 
@@ -24,29 +22,15 @@ type Props = {
 };
 
 const Header4 = ({ headerNav }: Props) => {
-  const [scroll, setScroll] = useState<boolean>(false);
   const { openContactModal } = useContact();
-
-  useEffect(() => {
-    window.addEventListener("scroll", scrollHeader);
-  }, []);
-
-  const scrollHeader = () => {
-    if (window.scrollY >= 20) {
-      setScroll(true);
-    } else {
-      setScroll(false);
-    }
-  };
 
   return (
     <header
       className={cn(
-        scroll ? "fixed" : "absolute",
-        "top-0 left-0 w-full z-[99] max-w-[1920px] mx-auto px-[15px] lg:px-[30px]"
+        "fixed top-0 left-0 w-full z-[99] max-w-none lg:max-w-[1920px] lg:mx-auto"
       )}
     >
-      <div className="bg-sec_bg-2 px-[30px] rounded-[0_0_20px_20px]">
+      <div className="bg-sec_bg-2 px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem] rounded-[0_0_20px_20px]">
         <div className="flex items-center justify-between h-[90px]">
           <div className="flex-shrink-0">
             <Logo />

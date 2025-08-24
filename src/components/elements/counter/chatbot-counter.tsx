@@ -664,19 +664,84 @@ const ChatbotCounter = ({ counter }: Props) => {
   );
 
   return (
-    <section className="w-full mt-[3rem] px-[3rem]">
-      <div className="w-full text-[16px] has_fade_anim" ref={containerRef}>
+    <section className="w-full px-[1rem] sm:px-[1.5rem] md:px-[2rem] lg:px-[2.5rem] xl:px-[3rem] mt-[2rem] sm:mt-[2.5rem] md:mt-[3rem] lg:mt-[3.5rem] xl:mt-[4rem]">
+      <div className="w-full text-[12px] sm:text-[14px] md:text-[16px] has_fade_anim" ref={containerRef}>
         <div className="grid grid-cols-1 2xl:grid-cols-1">
-          <div className="bg-sec_bg-2 rounded-theme flex flex-col justify-start py-[56px] w-full max-w-none mx-auto min-h-[600px] 2xl:min-h-[700px]">
+          <div className="bg-sec_bg-2 rounded-theme flex flex-col justify-start py-[2rem] sm:py-[3rem] md:py-[4rem] lg:py-[5rem] xl:py-[6rem] w-full max-w-none mx-auto min-h-[400px] sm:min-h-[450px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] 2xl:min-h-[700px]">
             <TitleSection2
               title={title}
               details={details}
               html
-              titleClassName="w-full flex justify-center whitespace-nowrap text-center 2xl:text-[55px] text-[55px] leading-[1.16] has_fade_anim "
-              detailsClassName="text-[18px] text-center mt-[10px] 2xl:mt-[20px] max-w-[800px] mx-auto has_fade_anim w-full px-4"
+              titleClassName="w-full flex justify-center text-center text-[32px] sm:text-[36px] md:text-[40px] lg:text-[45px] xl:text-[50px] 2xl:text-[55px] leading-[1.16] has_fade_anim px-2 sm:px-3 md:px-4"
+              detailsClassName="text-[12px] sm:text-[14px] md:text-[16px] lg:text-[18px] text-center mt-[0.5rem] sm:mt-[1rem] md:mt-[1.5rem] lg:mt-[2rem] xl:mt-[2.5rem] 2xl:mt-[3rem] max-w-[600px] sm:max-w-[700px] md:max-w-[800px] mx-auto has_fade_anim w-full px-2 sm:px-3 md:px-4"
             />
 
-            <div className="network-container mt-[40px] relative w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden">
+            {/* Mobile Cards Layout */}
+            <div className="block md:hidden mt-[2rem] sm:mt-[2.5rem] space-y-4">
+              {/* Cortex360 Central Card */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-6 text-center">
+                <h3 className="text-xl font-bold mb-2 !text-white">Cortex360</h3>
+                <p className="text-sm opacity-90 !text-white">Central AI Hub connecting all solutions</p>
+              </div>
+
+              {/* Solution Cards Grid */}
+              <div className="grid grid-cols-1 gap-4">
+                {initialNodes.filter(node => node.id !== 'cortex360').map((node) => {
+                  const nodeData = node.data;
+                  const getIcon = (iconType: string) => {
+                    switch (iconType) {
+                      case 'clinical-trial':
+                        return <GiMedicines size={32} className="text-blue-600" />;
+                      case 'tender-analyzer':
+                        return <HiDocumentMagnifyingGlass size={32} className="text-blue-600" />;
+                      case 'dashboard-generation':
+                        return <DiGoogleAnalytics size={32} className="text-blue-600" />;
+                      case 'demand-forecasting':
+                        return <BsGraphUp size={32} className="text-blue-600" />;
+                      case 'conversational-intelligence':
+                        return <LuBrainCircuit size={32} className="text-blue-600" />;
+                      case 'sales-tracking':
+                        return <CiDeliveryTruck size={32} className="text-blue-600" />;
+                      default:
+                        return <div className="text-2xl">📊</div>;
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={node.id}
+                      onClick={() => handleNodeButtonClick(nodeData.title)}
+                      className="bg-white rounded-lg shadow-lg border border-gray-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
+                    >
+                      {/* Header */}
+                      <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-3 border-b border-blue-200">
+                        <h3 className="text-sm font-bold text-blue-800 text-center leading-tight">{nodeData.title}</h3>
+                      </div>
+
+                      {/* Body */}
+                      <div className="p-4">
+                        <div className="flex items-center justify-center mb-3">
+                          {getIcon(nodeData.iconType)}
+                        </div>
+                        <p className="text-xs text-gray-600 text-center leading-relaxed mb-4">
+                          {nodeData.description && nodeData.description.length > 120
+                            ? `${nodeData.description.substring(0, 120)}...`
+                            : nodeData.description || 'AI-powered solution for healthcare and pharmaceutical industries.'}
+                        </p>
+                        <div className="flex justify-center">
+                          <div className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-md transition-colors duration-200 shadow-sm font-medium">
+                            Learn More
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Desktop/Tablet Canvas Layout */}
+            <div className="hidden md:block network-container mt-[2rem] sm:mt-[2.5rem] md:mt-[3rem] lg:mt-[3.5rem] xl:mt-[4rem] relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl md:rounded-xl overflow-hidden">
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
