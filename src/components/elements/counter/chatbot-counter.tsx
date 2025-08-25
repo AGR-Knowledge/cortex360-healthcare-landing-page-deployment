@@ -186,86 +186,70 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData, openContactModal, setIs
   // Create portal to render modal outside component tree
   const modalElement = (
     <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 9999,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
         cursor: 'pointer'
       }}
       onClick={onClose}
     >
       <div
+        className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-2xl lg:max-w-3xl max-h-[95vh] sm:max-h-[85vh] overflow-y-auto p-4 sm:p-6"
         style={{
-          position: 'relative',
-          backgroundColor: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)',
-          maxWidth: '600px',
-          width: 'calc(100% - 40px)',
-          maxHeight: '80vh',
-          overflowY: 'auto',
           cursor: 'default'
         }}
         onClick={(e) => e.stopPropagation()}
-        className="p-6"
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 pr-4 leading-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold hover:bg-gray-100 p-2 rounded-full transition-colors duration-200"
+            className="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl font-bold hover:bg-gray-100 p-1.5 sm:p-2 rounded-full transition-colors duration-200 flex-shrink-0"
           >
             ×
           </button>
         </div>
 
         {nodeData ? (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Icon */}
             <div className="flex justify-center">
               {(() => {
+                const iconSize = 'w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20';
                 switch (nodeData.title) {
                   case 'Clinical Trial Setup: The Hidden Burden':
-                    return <GiMedicines size={80} className="text-blue-600" />;
+                    return <GiMedicines className={`${iconSize} text-blue-600`} />;
                   case 'AI-Assisted Tender Analyzer':
-                    return <HiDocumentMagnifyingGlass size={80} className="text-blue-600" />;
+                    return <HiDocumentMagnifyingGlass className={`${iconSize} text-blue-600`} />;
                   case 'Natural Language Dashboard Generated':
-                    return <DiGoogleAnalytics size={80} className="text-blue-600" />;
+                    return <DiGoogleAnalytics className={`${iconSize} text-blue-600`} />;
                   case 'Advanced Demand & Inventory Forecasting':
-                    return <BsGraphUp size={80} className="text-blue-600" />;
+                    return <BsGraphUp className={`${iconSize} text-blue-600`} />;
                   case 'Conversational Data Intelligence':
-                    return <LuBrainCircuit size={80} className="text-blue-600" />;
+                    return <LuBrainCircuit className={`${iconSize} text-blue-600`} />;
                   case 'Intelligent Secondary Sales Tracking':
-                    return <CiDeliveryTruck size={80} className="text-blue-600" />;
+                    return <CiDeliveryTruck className={`${iconSize} text-blue-600`} />;
                   default:
-                    return <div className="text-6xl">📊</div>;
+                    return <div className="text-4xl sm:text-5xl md:text-6xl">📊</div>;
                 }
               })()}
             </div>
 
             {/* Description */}
             <div className="text-gray-600">
-              <p className="text-lg leading-relaxed">{nodeData.description}</p>
+              <p className="text-sm sm:text-base md:text-lg leading-relaxed">{nodeData.description}</p>
             </div>
 
             {/* Key Features */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Key Features</h3>
-              <ul className="space-y-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Key Features</h3>
+              <ul className="space-y-1.5 sm:space-y-2">
                 {nodeData.keyFeatures.map((feature: string, index: number) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-blue-500 mr-2">•</span>
-                    <span className="text-gray-600">{feature}</span>
+                    <span className="text-blue-500 mr-2 flex-shrink-0 mt-0.5">•</span>
+                    <span className="text-gray-600 text-sm sm:text-base leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -273,19 +257,19 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData, openContactModal, setIs
 
             {/* Benefits */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Benefits</h3>
-              <ul className="space-y-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">Benefits</h3>
+              <ul className="space-y-1.5 sm:space-y-2">
                 {nodeData.benefits.map((benefit: string, index: number) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <span className="text-gray-600">{benefit}</span>
+                    <span className="text-green-500 mr-2 flex-shrink-0 mt-0.5">✓</span>
+                    <span className="text-gray-600 text-sm sm:text-base leading-relaxed">{benefit}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4 justify-end">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4 justify-end">
               {nodeData.buttons.map((button: any, index: number) => (
                 <button
                   key={index}
@@ -295,9 +279,9 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData, openContactModal, setIs
                       setIsModalOpen(false);
                     }
                   }}
-                  className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${index === 0
+                  className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium text-sm sm:text-base transition-colors duration-200 ${index === 0
                     ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800 hover:bg-gray-300'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                     }`}
                 >
                   {button.text}
@@ -306,9 +290,9 @@ const ModalPortal = ({ isOpen, onClose, title, nodeData, openContactModal, setIs
             </div>
           </div>
         ) : (
-          <div className="text-gray-600 mb-6">
-            <p>This is a detailed view for {title}. Here you can add more information about this feature, including:</p>
-            <ul className="list-disc list-inside mt-3 space-y-1">
+          <div className="text-gray-600 mb-4 sm:mb-6">
+            <p className="text-sm sm:text-base leading-relaxed">This is a detailed view for {title}. Here you can add more information about this feature, including:</p>
+            <ul className="list-disc list-inside mt-2 sm:mt-3 space-y-1 text-sm sm:text-base">
               <li>Detailed feature description</li>
               <li>Technical specifications</li>
               <li>Use cases and benefits</li>
