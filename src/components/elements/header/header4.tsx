@@ -14,7 +14,6 @@ import { useContact } from "@/context/contact.context";
 
 // components
 import Logo from "../common/logo";
-import Offcanvas1 from "../offcanvas/offcanvas1";
 import Menu3 from "../menu/menu3";
 
 type Props = {
@@ -48,9 +47,6 @@ const Header4 = ({ headerNav }: Props) => {
                 Book a Demo
               </span>
             </Button>
-            <div className="flex justify-end xl:hidden">
-              <Offcanvas1 headerNav={headerNav} />
-            </div>
           </div>
         </div>
       </div>

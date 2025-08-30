@@ -167,15 +167,16 @@ const ChatbotFeature = ({ feature }: Props) => {
           <div className="w-full mb-4 sm:mb-5 md:mb-6">
             <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 lg:p-6 shadow-md border border-blue-100">
               <div className="space-y-2 sm:space-y-3">
-                  <div className="flex-1">
+                <div className="flex-1">
                   <textarea
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none leading-relaxed text-[12px] sm:text-[14px] md:text-[16px]"
-                      placeholder="Ask a question..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none leading-relaxed text-[12px] sm:text-[14px] md:text-[16px] disabled:cursor-not-allowed"
+                    placeholder="Ask a question..."
                     rows={2}
-                    />
-                  </div>
+                    disabled
+                  />
+                </div>
                 <div className="flex justify-end">
                   <button
                     ref={buttonRef}
@@ -269,12 +270,12 @@ const ChatbotFeature = ({ feature }: Props) => {
               </div>
 
               <div className="h-48 sm:h-56 md:h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis
+                    <XAxis
                       dataKey="metric"
-                        fontSize={10}
+                      fontSize={10}
                       tickLine={false}
                       axisLine={false}
                       tick={{ fill: '#6b7280' }}
@@ -289,7 +290,7 @@ const ChatbotFeature = ({ feature }: Props) => {
                         return value.toString();
                       }}
                     />
-                      <Tooltip
+                    <Tooltip
                       formatter={(value, name) => {
                         if (name === 'highPerformers') return [value, 'High Performers'];
                         if (name === 'lowPerformers') return [value, 'Low Performers'];
@@ -315,17 +316,17 @@ const ChatbotFeature = ({ feature }: Props) => {
                       name="Low Performers"
                       radius={[4, 4, 0, 0]}
                     />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
 
               {/* Chart Footer Info */}
               <div className="mt-3 sm:mt-4 text-center text-[8px] sm:text-[10px] md:text-xs text-gray-500">
                 <p>Data shows significant performance gaps between high and low performing stores</p>
-                </div>
               </div>
             </div>
           </div>
+        </div>
 
         {/* 4. Subtitle and Complex Queries Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 w-full">
@@ -457,13 +458,13 @@ const ChatbotFeature = ({ feature }: Props) => {
             <div className="flex justify-center mt-3 sm:mt-4">
               <button
                 onClick={openContactModal}
-              className={cn(buttonVariants({ variant: "primary3" }),
+                className={cn(buttonVariants({ variant: "primary3" }),
                   "border border-border rounded-lg px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 text-[14px] sm:text-[16px] md:text-[18px] lg:text-xl font-semibold w-auto"
-              )}
-            >
-              <span className="btn-span uppercase" data-text={action_btn.label}>
-                {action_btn.label}
-              </span>
+                )}
+              >
+                <span className="btn-span uppercase" data-text={action_btn.label}>
+                  {action_btn.label}
+                </span>
               </button>
             </div>
           </div>
