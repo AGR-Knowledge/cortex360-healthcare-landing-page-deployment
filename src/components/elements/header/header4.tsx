@@ -34,9 +34,9 @@ const Header4 = ({ headerNav }: Props) => {
           <div className="flex-shrink-0">
             <Logo />
           </div>
-          {/* <div className="hidden xl:flex justify-center flex-1 px-4">
+          <div className="hidden xl:flex justify-center flex-1 px-4">
             <Menu3 headerNav={headerNav} />
-          </div> */}
+          </div>
           <div className="flex items-center gap-5">
             <Button
               variant="primary3"

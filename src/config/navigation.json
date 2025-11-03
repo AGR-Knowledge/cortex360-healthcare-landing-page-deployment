@@ -1,20 +1,16 @@
 {
 	"header": [
 		{
-			"name": "Industries",
-			"path": "/chatbot"
+			"name": "Home",
+			"path": "https://www.agrknowledge.com/"
 		},
 		{
-			"name": "About Us",
-			"path": "/about"
+			"name": "Cortex360",
+			"path": "/"
 		},
 		{
-			"name": "AI Enterprise Solutions",
-			"path": "/team"
-		},
-		{
-			"name": "Knowledge base",
-			"path": "/blog"
+			"name": "GlobalBiz",
+			"path": "https://globalbiz.agrknowledgeai.com/"
 		}
 	],
 	"footer1": [
