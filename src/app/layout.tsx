@@ -2,6 +2,7 @@ import { AppContextProvider } from "@/context/app.context";
 import { ContactProvider } from "@/context/contact.context";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 import navigation from "@/config/navigation.json";
 
 // Components
@@ -32,8 +33,22 @@ export default function RootLayout({
           name="format-detection"
           content="telephone=no, date=no, email=no, address=no"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-793J7E3WQR');
+            `,
+          }}
+        />
       </head>
       <body suppressHydrationWarning={true} dir="ltr">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-793J7E3WQR"
+          strategy="afterInteractive"
+        />
         <AppContextProvider>
           <ContactProvider>
             <div className="tropiline-regular root-layout" theme-setting="style-4">
