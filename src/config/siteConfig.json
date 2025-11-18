@@ -6,7 +6,7 @@
 	},
 
 	"site_info": {
-		"title": "AGR AI Hub",
+		"title": "Cortex360 for Healthcare & Pharma",
 		"description": "We deliver AI-driven solutions that enhance efficiency, engagement, and decision-making, giving businesses a competitive edge through advanced insights and automation.",
 		"base_url": "https://agrknowledgeai.com/",
 		"logo": "/assets/imgs/logo/logo.png",
@@ -14,7 +14,7 @@
 		"logo_icon": "/assets/imgs/logo/logo-icon.png",
 		"logo_width": 115,
 		"logo_height": 32,
-		"logo_text": "AGR AI Hub"
+		"logo_text": "Cortex360 for Healthcare & Pharma"
 	},
 
 	"footer_info": {
